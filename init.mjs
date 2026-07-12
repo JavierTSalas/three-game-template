@@ -49,10 +49,20 @@ async function main() {
   }
 
   const rl = createInterface({ input: stdin, output: stdout });
-  // rl.question never settles if stdin hits EOF first (piped answers, CI) — race the
-  // close event so missing answers fall back to defaults instead of hanging the script
-  const closed = new Promise(res => rl.once('close', () => res(null)));
-  const ask = async (q, def) => ((await Promise.race([rl.question(`${q} [${def}]: `), closed])) ?? '').trim() || def;
+  // Don't use rl.question: piped answers (CI, `printf '...' | node init.mjs`) can arrive
+  // between questions and get dropped, and question() after EOF throws. Buffer every
+  // line ourselves and consume one per prompt — identical behavior typed or piped.
+  const pending = [];
+  let stdinDone = false;
+  rl.on('line', l => pending.push(l));
+  rl.once('close', () => { stdinDone = true; });
+  const ask = async (q, def) => {
+    stdout.write(`${q} [${def}]: `);
+    while (!pending.length && !stdinDone) await new Promise(r => setTimeout(r, 15));
+    const a = (pending.shift() ?? '').trim();
+    if (stdinDone) stdout.write('\n'); // keep piped output readable
+    return a || def;
+  };
 
   const defId = basename(root).toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '') || 'my-game';
   let id = await ask('Game id (npm/package-safe)', defId);
