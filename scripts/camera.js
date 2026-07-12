@@ -4,7 +4,9 @@ import { state } from './state.js';
 
 // Third-person follow rig: drag the right half of the screen to orbit, auto-settle behind
 // movement, exponential position lerp, decaying shake. state.camYaw is the yaw authority.
-export function buildCameraRig(camera, player, canvas) {
+// Build ONCE per session and pass a getPlayer thunk — restarts swap the player out from
+// under it (rebuilding the rig would stack pointer listeners and multiply drag speed).
+export function buildCameraRig(camera, getPlayer, canvas) {
   let dragId = null, lastX = 0;
   let shakeMag = 0;
   const look = new THREE.Vector3();
@@ -26,6 +28,8 @@ export function buildCameraRig(camera, player, canvas) {
   return {
     shake(mag) { shakeMag = Math.max(shakeMag, mag); },
     update(dt) {
+      const player = getPlayer();
+      if (!player?.isLoaded?.()) return;
       const p = player.getWorldPos();
       const v = player.velocity();
       const speed = Math.hypot(v.x, v.z);

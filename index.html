@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>__GAME_TITLE__</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="theme-color" content="#101623">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  @font-face { font-family: 'Lucky'; src: url('fonts/luckiestguy.woff2') format('woff2'); font-display: swap; }
+  @font-face { font-family: 'Baloo'; src: url('fonts/baloo2-500.woff2') format('woff2'); font-display: swap; }
+  :root {
+    /* the palette — init.mjs retints these (and manifest.json + theme-color above) */
+    --bg: #101623;      /* page + splash + panel background */
+    --ink: #eef4ff;     /* text */
+    --accent: #22c4a8;  /* the guy, primary buttons */
+    --accent2: #ffd166; /* highlights */
+    --display: 'Lucky', 'Trebuchet MS', system-ui, sans-serif;
+    --body: 'Baloo', 'Trebuchet MS', system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
+  /* ONE size authority: fixed inset:0 — no vh/dvh/innerHeight anywhere. The page tracks
+     the layout viewport exactly (URL bar, fullscreen, rotation) and can never scroll.
+     Full story: docs/full-screen-pwa.md */
+  html, body { position: fixed; inset: 0; overflow: hidden; background: var(--bg); touch-action: none; overscroll-behavior: none; }
+  #gameCanvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  .overlay { position: fixed; inset: 0; pointer-events: none; font-family: var(--body); color: var(--ink); touch-action: none; }
+  #splash { position: fixed; inset: 0; background: var(--bg); z-index: 60; }
+  #splashCanvas { width: 100%; height: 100%; display: block; }
+  /* Controls (no HUD — chrome is controls only) */
+  #controls { display: none; }
+  #stickZone { position: fixed; left: 0; bottom: 0; width: 42vw; height: 55vh; pointer-events: auto; touch-action: none; }
+  #stick { position: absolute; left: max(76px, calc(env(safe-area-inset-left) + 64px)); bottom: 76px;
+           width: 92px; height: 92px; margin: -46px 0 0 -46px;
+           border-radius: 50%; background: #00000042; border: 2px solid #ffffff66; display: none; }
+  #stickNub { position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px;
+              border-radius: 50%; background: var(--accent); opacity: 0.85; box-shadow: 0 2px 8px #0007; }
+  #hopBtn { position: fixed; right: max(26px, calc(env(safe-area-inset-right) + 14px));
+            bottom: max(26px, calc(env(safe-area-inset-bottom) + 12px));
+            width: 76px; height: 76px; border-radius: 50%; border: 2px solid #ffffff66; background: #00000055;
+            color: var(--ink); font-family: var(--body); font-size: 13px; font-weight: 800; pointer-events: auto; touch-action: none;
+            text-shadow: 0 1px 3px #000; box-shadow: 0 2px 10px #0008; }
+  #hopBtn:active { background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #dashBtn { position: fixed; right: max(26px, calc(env(safe-area-inset-right) + 14px));
+             bottom: calc(max(26px, calc(env(safe-area-inset-bottom) + 12px)) + 88px);
+             width: 56px; height: 56px; border-radius: 50%; border: 2px solid #ffffff66; background: #00000055;
+             color: var(--ink); font-family: var(--body); font-size: 11px; font-weight: 800; line-height: 1.1; pointer-events: auto;
+             touch-action: none; text-shadow: 0 1px 3px #000; box-shadow: 0 2px 10px #0008; }
+  #dashBtn:active { background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #pauseBtn { position: fixed; top: max(8px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right));
+              width: 38px; height: 38px; border-radius: 50%; border: 1px solid #ffffff2e; background: #00000055;
+              color: var(--ink); font-size: 16px; pointer-events: auto; touch-action: none; cursor: pointer; }
+  /* Screens */
+  .screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: safe center;
+            justify-content: safe center; gap: 14px; background: color-mix(in srgb, var(--bg) 85%, transparent);
+            pointer-events: auto; text-align: center; font-family: var(--body); color: var(--ink);
+            overflow-y: auto; overflow-x: hidden; touch-action: pan-y; }
+  .screen h1 { font-family: var(--display); font-weight: 400; letter-spacing: 1px; font-size: clamp(30px, 7vw, 56px);
+               color: var(--accent); text-shadow: 0 4px 0 #0008; }
+  .screen p  { font-size: 15px; max-width: 520px; padding: 0 16px; line-height: 1.45; }
+  .screen button { font-family: var(--display); font-size: 20px; letter-spacing: 1px; padding: 12px 44px; border-radius: 999px; border: 0;
+                   background: var(--accent); color: var(--bg); box-shadow: 0 4px 0 #0008; cursor: pointer; }
+  .screen button.ghost { background: #ffffff10; color: var(--ink); box-shadow: 0 4px 0 #0006; border: 1px solid #ffffff2e; font-size: 15px; padding: 9px 30px; }
+  /* hero menu: transparent right side shows the live orbiting world; the RAIL scrolls
+     internally on short screens (page never scrolls) */
+  .screen.menu { background: none; flex-direction: row; justify-content: flex-start; align-items: stretch; text-align: left;
+                 overflow: hidden; touch-action: none; }
+  #menuRail { width: min(340px, 40vw); height: 100%; overflow-y: auto; overflow-x: hidden;
+              touch-action: pan-y; scrollbar-width: none;
+              padding: max(14px, env(safe-area-inset-top)) 26px max(14px, env(safe-area-inset-bottom))
+                       max(26px, env(safe-area-inset-left));
+              background: linear-gradient(90deg, color-mix(in srgb, var(--bg) 96%, transparent) 74%, transparent);
+              display: flex; flex-direction: column; gap: 11px; justify-content: safe center; }
+  #menuRail::-webkit-scrollbar { display: none; }
+  #menuRail h1 { font-size: clamp(34px, 5.6vw, 60px); line-height: 1; }
+  #menuRail button { width: fit-content; }
+  #menuRail .ver { font-size: 10px; color: color-mix(in srgb, var(--ink) 40%, transparent); }
+  #creditsPanel { display: none; position: absolute; inset: 0; background: color-mix(in srgb, var(--bg) 93%, transparent);
+                  flex-direction: column; align-items: safe center; justify-content: safe center; gap: 12px; text-align: center;
+                  overflow-y: auto; touch-action: pan-y; padding: 14px 0; pointer-events: auto; }
+  #creditsPanel.open { display: flex; }
+  #creditsPanel h2 { font-family: var(--display); font-weight: 400; letter-spacing: 2px; color: var(--accent);
+                     font-size: clamp(22px, 4vw, 34px); text-shadow: 0 3px 0 #0008; }
+  #creditsPanel .credits { max-width: min(560px, 90vw); font-size: 13px; line-height: 1.5;
+                           display: flex; flex-direction: column; gap: 7px; }
+  #creditsPanel .credits b { color: var(--accent2); }
+  /* Rotate hint (portrait only) — portrait game? flip this media query + manifest orientation */
+  #rotateHint { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 50;
+                align-items: center; justify-content: center; font-size: 22px; font-weight: 800; text-align: center; padding: 24px; }
+  @media (orientation: portrait) { #rotateHint { display: flex; } }
+</style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <div id="splash"><canvas id="splashCanvas"></canvas></div>
+  <div id="controls" class="overlay">
+    <div id="stickZone"><div id="stick"><div id="stickNub"></div></div></div>
+    <button id="hopBtn">HOP</button>
+    <button id="dashBtn">💨<br>DASH</button>
+    <button id="pauseBtn" title="pause">⏸</button>
+  </div>
+  <div id="startScreen" class="screen menu">
+    <div id="menuRail">
+      <h1>__GAME_TITLE__</h1>
+      <button id="playBtn">PLAY</button>
+      <button id="menuFsBtn" class="ghost">⛶ FULLSCREEN</button>
+      <button id="creditsBtn" class="ghost">♥ CREDITS</button>
+      <button id="refreshBtn" class="ghost">↻ REFRESH APP</button>
+      <div class="ver">v1.0</div>
+    </div>
+    <div id="creditsPanel">
+      <h2>CREDITS</h2>
+      <div class="credits">
+        <p><b>A game by __AUTHOR__</b>.</p>
+        <p><b>Engine:</b> three-game-engine by Wes Unwin (MIT), bundling
+           <b>three.js</b> (MIT), <b>Rapier</b> physics by Dimforge (Apache-2.0), and three-mesh-ui (MIT).</p>
+        <p><b>Fonts:</b> Luckiest Guy by Astigmatic &amp; Baloo 2 by Ek Type (both SIL Open Font License).</p>
+        <p><b>Tools:</b> webpack · Playwright · Blender · gltf-transform · Vercel.</p>
+        <p>Built from <b>three-game-template</b>.</p>
+      </div>
+      <button id="creditsClose" class="ghost">✕ BACK</button>
+    </div>
+  </div>
+  <div id="pauseScreen" class="screen" style="display:none;">
+    <h1 style="font-size:clamp(26px, 5vw, 42px);">PAUSED</h1>
+    <button id="resumeBtn">RESUME</button>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+      <button id="pauseRestartBtn" class="ghost">↻ RESTART</button>
+      <button id="pauseFsBtn" class="ghost">⛶ FULLSCREEN</button>
+      <button id="soundBtn" class="ghost">🔊 SOUND ON</button>
+    </div>
+  </div>
+  <div id="rotateHint" class="overlay">🔄<br>Rotate your phone sideways —<br>this one plays in landscape.</div>
+</body>
+</html>
