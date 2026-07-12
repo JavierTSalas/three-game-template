@@ -59,7 +59,7 @@ drift stays visible.
 
 ## Architecture
 
-![Architecture](docs/architecture.svg)
+![Architecture](docs/architecture.png)
 
 ## After you init
 
