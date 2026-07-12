@@ -1,6 +1,7 @@
 # Full-screen mobile web games & PWA — the pattern that works
 
-Everything here was learned the hard way in this repo (see commits `a16f150`, `588dc0e`).
+Everything here was learned the hard way shipping real mobile browser games — every pitfall
+in the table below actually shipped at some point and got root-caused on-device.
 The theme of every bug: **two rulers measuring the same thing**. There must be exactly one
 authority for viewport size, and it is CSS.
 
