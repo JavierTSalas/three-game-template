@@ -49,7 +49,10 @@ async function main() {
   }
 
   const rl = createInterface({ input: stdin, output: stdout });
-  const ask = async (q, def) => (await rl.question(`${q} [${def}]: `)).trim() || def;
+  // rl.question never settles if stdin hits EOF first (piped answers, CI) — race the
+  // close event so missing answers fall back to defaults instead of hanging the script
+  const closed = new Promise(res => rl.once('close', () => res(null)));
+  const ask = async (q, def) => ((await Promise.race([rl.question(`${q} [${def}]: `), closed])) ?? '').trim() || def;
 
   const defId = basename(root).toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '') || 'my-game';
   let id = await ask('Game id (npm/package-safe)', defId);
