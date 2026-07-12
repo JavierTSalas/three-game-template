@@ -1,6 +1,7 @@
 import { state } from './state.js';
 import { events } from './events.js';
 import { spawnPrefab } from './spawn.js';
+import Platform from './platform.js';
 
 // Run lifecycle: phases, restart, win/lose API. Content-free on purpose — your game's
 // rules (timers, score targets, spawn tables) plug in here and in startRun.
@@ -16,7 +17,7 @@ export default class Director {
     state.phase = 'ready'; // first real input flips it to 'playing' (tick)
     state.everMoved = false;
     this.platforms = (this.level.platforms || []).map((p, i) =>
-      spawnPrefab(this.game, 'platform', `platform${i}`, p));
+      spawnPrefab(this.game, Platform, { type: 'platform', name: `platform${i}`, position: p }));
     events.emit('runstart');
   }
 

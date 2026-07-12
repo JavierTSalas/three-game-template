@@ -26,7 +26,7 @@ export function buildJoystick() {
     stick.style.left = `${cx - zr.left}px`;
     stick.style.top = `${cy - zr.top}px`;
     stick.style.bottom = 'auto';
-    zone.setPointerCapture(id);
+    try { zone.setPointerCapture(id); } catch { /* synthetic pointers (Playwright drives) have no active pointer */ }
   });
   zone.addEventListener('pointermove', e => {
     if (e.pointerId !== id) return;

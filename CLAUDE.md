@@ -58,8 +58,10 @@ are exposed for introspection. Judge motion by driving it, not from a single fra
 - **JSON schema is components-based**: `{"components":[{"type":"rigidBody","rigidBodyType":"dynamic","colliders":[...]}]}`.
   The engine's own docs folder shows an older `"rigidBody":{}` / `"models":[]` form — WRONG, don't copy it.
 - **`scene.active` is never set true** by the engine, so `addGameObject` never auto-loads
-  runtime spawns: after `new GameObject(...)` you MUST call `obj.load().then(() => obj.afterLoaded())`
-  — use `scripts/spawn.js`, that's what it's for.
+  runtime spawns: after constructing one you MUST call `obj.load().then(() => obj.afterLoaded())`.
+  AND: **`registerGameObjectClasses` only applies to scene-JSON loads** — a runtime
+  `new GameObject(...)` bypasses the registry, so your subclass's `afterLoaded` (meshes!)
+  silently never runs; construct the subclass itself. `scripts/spawn.js` encodes both.
 - **`game.renderer` exists only after `game.play()`** (created in async `_init`). Attach
   `game.renderer.options.beforeRender` after play resolves.
 - **Rapier `addForce` is persistent** (accumulates every frame until `resetForces`). Use

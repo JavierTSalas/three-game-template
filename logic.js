@@ -17,8 +17,8 @@ export const TUNE = {
   OOB_MARGIN: 8,        // this far past the play bounds = launched off the map
   OOB_DEPTH: -3,        // this far below ground = fell through geometry; respawn
 
-  CAM_DIST_K: 4.5, CAM_DIST_MIN: 1.4, CAM_DIST_BASE: 0.8,
-  CAM_HEIGHT_K: 2.2, CAM_HEIGHT_BASE: 0.5,
+  CAM_DIST_K: 4.5, CAM_DIST_MIN: 1.4, CAM_DIST_BASE: 1.3,
+  CAM_HEIGHT_K: 2.2, CAM_HEIGHT_BASE: 0.7,
   CAM_LERP: 5,          // exponential follow rate
   CAM_YAW_RATE: 1.6,    // auto-settle rate behind movement
 };
