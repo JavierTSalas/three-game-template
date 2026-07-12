@@ -1,0 +1,10 @@
+{
+  "tags": ["platform"],
+  "components": [
+    {
+      "type": "rigidBody",
+      "rigidBodyType": "fixed",
+      "colliders": [{ "type": "cuboid", "hx": 0.8, "hy": 0.2, "hz": 0.8, "friction": 0.9 }]
+    }
+  ]
+}

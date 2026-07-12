@@ -1,0 +1,11 @@
+{
+  "tags": ["terrain"],
+  "components": [
+    {
+      "type": "rigidBody",
+      "rigidBodyType": "fixed",
+      "colliders": [{ "type": "cuboid", "hx": 12, "hy": 0.5, "hz": 12, "friction": 0.9 }]
+    },
+    { "type": "light", "lightType": "AmbientLight", "intensity": 0.65 }
+  ]
+}

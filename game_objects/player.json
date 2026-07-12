@@ -1,0 +1,10 @@
+{
+  "tags": ["player"],
+  "components": [
+    {
+      "type": "rigidBody",
+      "rigidBodyType": "dynamic",
+      "colliders": [{ "type": "ball", "radius": 0.24, "density": 5, "friction": 0.8, "restitution": 0.25 }]
+    }
+  ]
+}
