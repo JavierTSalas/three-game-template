@@ -1,0 +1,11 @@
+{
+  "initialScene": "main",
+  "scenes": {
+    "main": "scenes/main.json"
+  },
+  "gameObjectTypes": {
+    "terrain": "game_objects/terrain.json",
+    "player": "game_objects/player.json",
+    "platform": "game_objects/platform.json"
+  }
+}
