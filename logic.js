@@ -14,6 +14,12 @@ export const TUNE = {
   HOP_DV: 3.4,          // vertical Δv of a hop → apex ≈ DV²/2g ≈ 0.59 m
   HOP_COOLDOWN: 0.6,
 
+  // three-game-engine v0.10 steps Rapier once per rendered frame. Keep physics on its
+  // own 60 Hz clock so browser/display refresh rate cannot change game speed.
+  PHYSICS_DT: 1 / 60,
+  MAX_FRAME_DT: 0.1,    // discard long tab/background stalls instead of catching up
+  MAX_PHYSICS_STEPS: 6,
+
   OOB_MARGIN: 8,        // this far past the play bounds = launched off the map
   OOB_DEPTH: -3,        // this far below ground = fell through geometry; respawn
 
@@ -25,6 +31,30 @@ export const TUNE = {
 
 // drive force falloff: 1 at rest → 0 at max speed (terminal velocity = maxSpeed)
 export const driveScale = (speed, maxSpeed) => Math.max(0, 1 - speed / maxSpeed);
+
+// Sanitize the renderer's clock before it reaches physics, cooldowns, or animation.
+export const clampFrameDelta = (dt, max = TUNE.MAX_FRAME_DT) =>
+  Number.isFinite(dt) ? Math.min(max, Math.max(0, dt)) : 0;
+
+// Consume a render-frame duration on a fixed simulation clock. Keeping this pure makes
+// refresh-rate behavior testable without a browser or Rapier.
+export function consumeFixedSteps(accumulator, frameDt, step = TUNE.PHYSICS_DT,
+  maxFrameDt = TUNE.MAX_FRAME_DT, maxSteps = TUNE.MAX_PHYSICS_STEPS) {
+  const dt = clampFrameDelta(frameDt, maxFrameDt);
+  const total = Math.max(0, accumulator) + dt;
+  const steps = Math.min(maxSteps, Math.floor((total + step * 1e-9) / step));
+  let remainder = Math.max(0, total - steps * step);
+  const nonNegativeFrameDt = Number.isFinite(frameDt) ? Math.max(0, frameDt) : 0;
+  let dropped = nonNegativeFrameDt - dt;
+
+  // Defensive overload protection if tuning ever permits more queued time than maxSteps.
+  if (remainder >= step) {
+    const kept = remainder % step;
+    dropped += remainder - kept;
+    remainder = kept;
+  }
+  return { dt, steps, remainder, dropped };
+}
 
 // launched off the map or through the floor: absolute check, respawn cue
 export const outOfWorld = (p, bounds) =>

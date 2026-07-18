@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { TUNE, driveScale, moveVector, headingOf, angleLerp, camDist, camHeight, outOfWorld } from './logic.js';
+import {
+  TUNE, driveScale, moveVector, headingOf, angleLerp, camDist, camHeight, outOfWorld,
+  clampFrameDelta, consumeFixedSteps,
+} from './logic.js';
 
 test('moveVector: stick-forward at camYaw 0 drives toward -z, unit-clamped', () => {
   const v = moveVector(0, 0, 1);
@@ -46,4 +49,27 @@ test('camera curves: distance clamps to its minimum, height stays positive', () 
   assert.equal(camDist(0), TUNE.CAM_DIST_MIN);
   assert.ok(camDist(TUNE.PLAYER_R) >= TUNE.CAM_DIST_MIN);
   assert.ok(camHeight(TUNE.PLAYER_R) > 0);
+});
+
+test('fixed physics clock advances 60 steps per second at common render rates', () => {
+  for (const renderHz of [30, 60, 90, 120, 144]) {
+    let accumulator = 0, steps = 0;
+    for (let frame = 0; frame < renderHz; frame++) {
+      const result = consumeFixedSteps(accumulator, 1 / renderHz);
+      accumulator = result.remainder;
+      steps += result.steps;
+    }
+    assert.equal(steps, 60, `${renderHz} Hz render loop`);
+    assert.ok(accumulator < TUNE.PHYSICS_DT);
+  }
+});
+
+test('fixed physics clock clamps invalid deltas and long background stalls', () => {
+  assert.equal(clampFrameDelta(-1), 0);
+  assert.equal(clampFrameDelta(Number.NaN), 0);
+  const result = consumeFixedSteps(0, 1);
+  assert.equal(result.dt, TUNE.MAX_FRAME_DT);
+  assert.equal(result.steps, TUNE.MAX_PHYSICS_STEPS);
+  assert.ok(result.dropped >= 0.9);
+  assert.ok(result.remainder < TUNE.PHYSICS_DT);
 });

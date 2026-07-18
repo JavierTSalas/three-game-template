@@ -8,6 +8,7 @@ import { buildCameraRig } from './scripts/camera.js';
 import { buildAudio } from './scripts/audio.js';
 import { buildParticles, toonify } from './scripts/juice.js';
 import { buildPause } from './scripts/pause.js';
+import { buildFixedPhysics } from './scripts/physics.js';
 import { bindFsButton } from './scripts/fullscreen.js';
 import { playSplash } from './scripts/splash.js';
 import { events } from './scripts/events.js';
@@ -99,11 +100,16 @@ async function boot() {
   await game.loadScene('main'); // load the scene…
   await game.play();            // …then play() skips initialScene since one is loaded
   rig = buildCameraRig(game.renderer.getCamera(), () => playerRef, canvas); // once, ever
+  const physics = buildFixedPhysics(game);
 
   // global per-frame hook (renderer exists only after play() → async _init)
   let menuYaw = 0.6; // hero menu: slow orbit over the live world
   fitCanvas(); // engine boot stamped inline px sizes — reclaim CSS authority immediately
-  game.renderer.options.beforeRender = ({ deltaTimeInSec }) => {
+  game.renderer.options.beforeRender = frame => {
+    // Mutate the engine's shared frame args so every later scene/object callback sees the
+    // same stall-safe delta. beginFrame also installs fixed stepping on replacement scenes.
+    frame.deltaTimeInSec = physics.beginFrame(frame.deltaTimeInSec);
+    const { deltaTimeInSec } = frame;
     fitCanvas(); // per-frame: resize events race fullscreen/rotation on mobile
     if (state.phase === 'menu') {
       const cam = game.renderer.getCamera();
@@ -164,6 +170,7 @@ async function boot() {
   await splash.done;
   splash.lift(); // world is spawned + menu is up — NOW drop the cover
   window.__director = director; // driver-script introspection (Playwright)
+  window.__physics = physics;   // fixed-step stats for driver-script timing checks
 }
 boot().catch(err => {
   console.error('BOOT FAILED', err);
