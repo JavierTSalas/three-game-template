@@ -8,7 +8,7 @@
 <link rel="icon" href="icons/spinfinity-192.png">
 <link rel="apple-touch-icon" href="icons/spinfinity-192.png">
 <meta name="theme-color" content="#02050d">
-<meta name="description" content="Steer the steel. Strike the pulse. Risk the rim.">
+<meta name="description" content="Steer your spinner. Strike the pulse. Risk the rim.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -31,7 +31,7 @@
   #splashCanvas { width:100%; height:100%; display:block; }
 
   #controls { display:none; z-index:8; }
-  #stickZone { position:fixed; left:0; bottom:0; width:43vw; height:58vh; pointer-events:auto; touch-action:none; }
+  #stickZone { position:fixed; left:0; bottom:0; width:43%; height:58%; pointer-events:auto; touch-action:none; }
   #stick { position:absolute; width:98px; height:98px; margin:-49px 0 0 -49px; border-radius:50%;
     border:1px solid #9cecff88; background:radial-gradient(circle,#17415b33,#02050dbb);
     box-shadow:0 0 24px #29dcff22,inset 0 0 18px #67efff22; display:none; }
@@ -56,14 +56,14 @@
   #hud { position:fixed; inset:0; pointer-events:none; }
   #scoreBlock { position:absolute; top:max(9px,env(safe-area-inset-top)); left:max(14px,env(safe-area-inset-left));
     text-shadow:0 2px 10px #000; }
-  #scoreValue { font:400 clamp(28px,6vw,50px)/.9 var(--display); letter-spacing:1px; color:#f4fbff; }
+  #scoreValue { font:400 50px/.9 var(--display); letter-spacing:1px; color:#f4fbff; }
   #scoreRate { margin-top:3px; color:var(--mint); font-size:11px; letter-spacing:1.5px; }
   #flowBlock { position:absolute; top:max(11px,env(safe-area-inset-top)); left:50%; transform:translateX(-50%);
     text-align:center; min-width:140px; }
-  #flowValue { font:400 clamp(19px,3.6vw,30px)/1 var(--display); color:var(--cyan); text-shadow:0 0 16px #23dfff; }
+  #flowValue { font:400 30px/1 var(--display); color:var(--cyan); text-shadow:0 0 16px #23dfff; }
   #zoneValue { margin-top:3px; font-size:10px; letter-spacing:2.6px; color:#b7d8e6; }
   #meters { position:absolute; left:max(14px,env(safe-area-inset-left)); bottom:max(14px,env(safe-area-inset-bottom));
-    width:min(220px,29vw); display:grid; gap:6px; }
+    width:min(220px,29%); display:grid; gap:6px; }
   .meterRow { display:grid; grid-template-columns:48px 1fr; gap:7px; align-items:center; color:#94b5c5; font-size:9px; letter-spacing:1.3px; }
   .track { height:7px; border-radius:99px; overflow:hidden; background:#02050dcc; border:1px solid #9ccfe833; box-shadow:0 2px 8px #0009; }
   .fill { height:100%; width:50%; border-radius:inherit; transition:width .12s; }
@@ -72,7 +72,7 @@
   #patternValue { position:absolute; right:max(18px,env(safe-area-inset-right)); top:max(55px,calc(env(safe-area-inset-top) + 47px));
     color:#7999ab; font-size:9px; letter-spacing:2px; }
   #gradeFlash { position:absolute; left:50%; top:30%; transform:translate(-50%,-50%) scale(.8); opacity:0;
-    font:400 clamp(24px,5vw,46px)/1 var(--display); letter-spacing:2px; text-shadow:0 0 18px currentColor,0 4px 0 #0008; }
+    font:400 46px/1 var(--display); letter-spacing:2px; text-shadow:0 0 18px currentColor,0 4px 0 #0008; }
   #gradeFlash.show { animation:grade .62s cubic-bezier(.18,.8,.2,1); }
   @keyframes grade { 0%{opacity:0;transform:translate(-50%,-50%) scale(.5)} 20%{opacity:1;transform:translate(-50%,-50%) scale(1.18)}
     72%{opacity:1;transform:translate(-50%,-70%) scale(1)} 100%{opacity:0;transform:translate(-50%,-100%) scale(.92)} }
@@ -88,7 +88,7 @@
     padding:max(14px,env(safe-area-inset-top)) 22px max(14px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left)); }
   #menuRail::-webkit-scrollbar { display:none; }
   .eyebrow { color:var(--cyan); font-size:9px; letter-spacing:4px; text-transform:uppercase; }
-  .screen h1 { font:400 clamp(39px,7vw,72px)/.92 var(--display); letter-spacing:2px;
+  .screen h1 { font:400 72px/.92 var(--display); letter-spacing:2px;
     background:linear-gradient(180deg,#fff 0%,#bcecf8 45%,#548398 55%,#e9fbff 72%,#5da4ba 100%);
     -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 4px 0 #000a) drop-shadow(0 0 22px #47dcff44); }
   .tagline { color:#a5c3d1; max-width:310px; font-size:13px; line-height:1.35; }
@@ -104,6 +104,10 @@
     padding:8px 18px; font:700 10px/1 var(--body); letter-spacing:1px; }
   .menuActions { display:flex; flex-wrap:wrap; gap:7px; max-width:310px; }
   .controlLegend { color:#658696; font-size:9px; letter-spacing:.7px; }
+  #skinLink { display:block; color:#b6ff7a; border:1px solid #8eed5544; background:#10200fbb;
+    box-shadow:0 0 18px #62e62c22; border-radius:999px; padding:7px 12px;
+    font-size:8px; font-weight:800; letter-spacing:1px; text-decoration:none; }
+  body[data-spinner="gator"] #skinLink { color:#dfff9d; border-color:#aaff6666; }
   .ver { color:#4f6b7a; font-size:8px; letter-spacing:2px; }
   #creditsPanel { display:none; position:absolute; inset:0; z-index:2; background:#02050df7; flex-direction:column;
     align-items:center; justify-content:center; gap:12px; text-align:center; padding:18px; }
@@ -113,22 +117,48 @@
   #creditsPanel b { color:#f5fcff; }
 
   #pauseScreen,#resultScreen { background:#02050de8; backdrop-filter:blur(11px); flex-direction:column; gap:12px; text-align:center; }
-  #pauseScreen h1,#resultScreen h1 { font-size:clamp(31px,6vw,54px); }
+  #pauseScreen h1,#resultScreen h1 { font-size:54px; }
   .buttonRow { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
   #resultReason { color:var(--pink); font-size:10px; letter-spacing:3px; }
-  #resultScore { font:400 clamp(44px,9vw,78px)/.9 var(--display); color:#fff; text-shadow:0 0 20px #52e8ff55; }
+  #resultScore { font:400 78px/.9 var(--display); color:#fff; text-shadow:0 0 20px #52e8ff55; }
   #resultBest { color:var(--gold); font-size:11px; letter-spacing:1.5px; }
   #resultStats { display:flex; gap:15px; color:#87a4b4; font-size:10px; }
   #resultStats b { display:block; color:#eef9ff; font-size:15px; }
   #newBest { color:var(--gold); font:400 18px/1 var(--display); letter-spacing:2px; display:none; animation:pulseBest .7s infinite alternate; }
   @keyframes pulseBest { to { transform:scale(1.08); text-shadow:0 0 20px #ffd166; } }
 
-  #rotateHint { display:none; position:fixed; inset:0; z-index:50; background:var(--bg); color:var(--ink);
-    align-items:center; justify-content:center; font-size:20px; text-align:center; padding:24px; }
   body.reduced-motion *,body.reduced-motion *::before,body.reduced-motion *::after { animation-duration:.001ms!important; animation-iteration-count:1!important; transition-duration:.001ms!important; }
-  @media (orientation:portrait) { #rotateHint { display:flex; } }
+  @media (max-width:900px) {
+    #scoreValue { font-size:38px; } #flowValue { font-size:24px; }
+    #gradeFlash { font-size:34px; } .screen h1 { font-size:52px; }
+    #pauseScreen h1,#resultScreen h1 { font-size:42px; } #resultScore { font-size:62px; }
+  }
+  @media (orientation:portrait) {
+    .menu { align-items:flex-end; justify-content:center;
+      background:linear-gradient(0deg,#02050dfd 0%,#02050df2 43%,#02050d99 62%,transparent 78%); }
+    #menuRail { width:100%; min-width:0; height:60%; align-items:center; justify-content:flex-end;
+      text-align:center; padding:max(12px,env(safe-area-inset-top)) 22px max(18px,env(safe-area-inset-bottom)); gap:7px; }
+    #menuRail h1 { font-size:52px; }
+    .tagline { max-width:340px; font-size:12px; }
+    .menuActions { justify-content:center; }
+    #skinLink { max-width:340px; }
+
+    #stickZone { width:52%; height:43%; }
+    #scoreBlock { left:50%; transform:translateX(-50%); text-align:center; top:max(12px,env(safe-area-inset-top)); }
+    #scoreValue { font-size:44px; }
+    #flowBlock { top:max(76px,calc(env(safe-area-inset-top) + 66px)); }
+    #flowValue { font-size:23px; }
+    #patternValue { top:max(126px,calc(env(safe-area-inset-top) + 116px)); left:50%; right:auto; transform:translateX(-50%); white-space:nowrap; }
+    #hint { top:max(151px,calc(env(safe-area-inset-top) + 141px)); bottom:auto; width:min(88%,340px); text-align:center; padding:7px 10px; }
+    #gradeFlash { top:29%; width:94%; text-align:center; font-size:32px; }
+    #meters { left:max(12px,env(safe-area-inset-left)); bottom:max(18px,env(safe-area-inset-bottom)); width:min(190px,48%); }
+    #hopBtn { right:max(22px,calc(env(safe-area-inset-right) + 14px)); bottom:max(24px,calc(env(safe-area-inset-bottom) + 14px)); width:78px; height:78px; }
+    #dashBtn { right:max(31px,calc(env(safe-area-inset-right) + 23px)); bottom:calc(max(24px,calc(env(safe-area-inset-bottom) + 14px)) + 96px); }
+    #resultStats { flex-wrap:wrap; justify-content:center; max-width:310px; }
+    #pauseScreen,#resultScreen { padding:18px; }
+  }
   @media (max-height:440px) {
-    #menuRail { gap:6px; } .screen h1 { font-size:clamp(36px,9vh,52px); }
+    #menuRail { gap:6px; } .screen h1 { font-size:48px; }
     .tagline { font-size:11px; } .action { transform:scale(.9); transform-origin:bottom right; }
     #dashBtn { bottom:108px; } #meters { width:min(210px,32vw); }
   }
@@ -160,12 +190,13 @@
     <div id="menuRail">
       <div class="eyebrow">precision top arcade</div>
       <h1>SPINFINITY</h1>
-      <p class="tagline">Steer the steel. Strike the rotating <b>PULSE</b>. Risk the rim. Keep the number climbing.</p>
+      <p class="tagline">Steer your spinner. Strike the rotating <b>PULSE</b>. Risk the rim. Keep the number climbing.</p>
       <div class="stats">
         <div class="stat">BEST RUN<strong id="menuBest">0</strong></div>
         <div class="stat">TOTAL SPIN<strong id="menuTotal">0</strong></div>
       </div>
       <button id="playBtn">DROP THE TOP</button>
+      <a id="skinLink" href="?spinner=gator">◈ TRY THE SLEEPY GATOR SPINNER</a>
       <div class="controlLegend">WASD / ARROWS TO STEER · SPACE TO PULSE · E / SHIFT TO OVERDRIVE</div>
       <div class="menuActions">
         <button id="menuFsBtn" class="ghost">⛶ FULLSCREEN</button>
@@ -211,7 +242,5 @@
     </div>
     <button id="spinAgainBtn">ONE MORE SPIN</button>
   </div>
-
-  <div id="rotateHint">↻<br>Rotate sideways to spin.</div>
 </body>
 </html>

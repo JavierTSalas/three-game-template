@@ -1,6 +1,6 @@
 # SPINFINITY
 
-A mobile-landscape precision arcade game about keeping a machined-steel top alive.
+A portrait-or-landscape precision arcade game about keeping a spinner alive.
 Steer into higher-risk score rings, strike **PULSE** when the rotating markers meet,
 chain perfect timings, collect resonance gates, and use **OVERDRIVE** without losing
 control. Every banked run increases the persistent **TOTAL SPIN**.
@@ -10,6 +10,9 @@ control. Every banked run increases the persistent **TOTAL SPIN**.
 - **Touch:** floating joystick to steer, **PULSE** to time a strike, **OVERDRIVE** to burst.
 - **Desktop:** WASD or arrows to steer, Space to pulse, E or Shift to overdrive.
 - Drag the right half of the arena to orbit the camera. Escape pauses.
+
+The standard brushed-steel top is the default cosmetic. Add `?spinner=gator` to any game
+URL to use the sleepy plush alligator spinner with identical physics and scoring.
 
 ## Run locally
 

@@ -4,7 +4,7 @@
   "description": "Steer the steel, strike the pulse, risk the rim, and keep the number climbing.",
   "start_url": ".",
   "display": "standalone",
-  "orientation": "landscape",
+  "orientation": "any",
   "background_color": "#02050d",
   "theme_color": "#02050d",
   "icons": [

@@ -2,7 +2,7 @@
 
 **Status:** Implemented MVP  
 **Date:** 2026-07-17  
-**Platform:** Mobile-landscape browser / desktop browser / installable PWA  
+**Platform:** Portrait or landscape mobile browser / desktop browser / installable PWA
 **Engine:** three-game-engine v0.10  
 **Tagline:** Keep it upright. Push the edge. Make the number absurd.
 
@@ -348,6 +348,7 @@ The first playable release includes:
 - Launch, steer, PULSE, OVERDRIVE, wobble recovery, edge saves, and crash.
 - Run score, FLOW, combo statistics, best score, and TOTAL SPIN.
 - Three cosmetic finishes.
+- URL-selectable sleepy alligator spinner cosmetic (`?spinner=gator`).
 - Full procedural sound and escalating feedback layers.
 - First-run interactive onboarding.
 - Pause, sound toggle, fullscreen, reduced-motion mode, restart, and PWA refresh path.
@@ -369,6 +370,7 @@ The first playable release includes:
 - At the menu camera angle, the hero top clearly matches the reference silhouette.
 - Spin direction, wobble direction, shadow, and scrape rhythm agree visually.
 - The primary score remains readable at 844×390 and 1280×720.
+- The full control/HUD shell remains playable at 390×844 portrait.
 - Sound layers scale with FLOW and never require sound for timing.
 - Reduced-motion mode removes camera shake, heavy trails, and large flashes.
 

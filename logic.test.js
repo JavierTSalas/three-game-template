@@ -3,8 +3,16 @@ import assert from 'node:assert/strict';
 import {
   TUNE, driveScale, moveVector, headingOf, angleLerp, camDist, camHeight, outOfWorld,
   clampFrameDelta, consumeFixedSteps, gradePulse, applyPulse, zoneForRadius, decaySpin,
-  advanceWobble, advanceFlow, scoreRate, pulseFrequency,
+  advanceWobble, advanceFlow, scoreRate, pulseFrequency, spinnerSkinFromSearch,
 } from './logic.js';
+
+test('spinner cosmetic is selected only from recognized URL parameter values', () => {
+  assert.equal(spinnerSkinFromSearch(''), 'steel');
+  assert.equal(spinnerSkinFromSearch('?spinner=steel'), 'steel');
+  assert.equal(spinnerSkinFromSearch('?spinner=gator'), 'gator');
+  assert.equal(spinnerSkinFromSearch('?spinner=ALLIGATOR&u=123'), 'gator');
+  assert.equal(spinnerSkinFromSearch('?spinner=unknown'), 'steel');
+});
 
 test('moveVector: stick-forward at camYaw 0 drives toward -z, unit-clamped', () => {
   const v = moveVector(0, 0, 1);

@@ -13,7 +13,7 @@ import { bindFsButton } from './scripts/fullscreen.js';
 import { playSplash } from './scripts/splash.js';
 import { events } from './scripts/events.js';
 import { state } from './scripts/state.js';
-import { outOfWorld } from './logic.js';
+import { outOfWorld, spinnerSkinFromSearch } from './logic.js';
 
 const splash = playSplash();
 navigator.serviceWorker?.register('sw.js').catch(() => {});
@@ -21,6 +21,19 @@ navigator.serviceWorker?.register('sw.js').catch(() => {});
 const el = id => document.getElementById(id);
 const canvas = el('gameCanvas');
 const baseURL = new URL('.', window.location.href).href;
+const spinnerSkin = spinnerSkinFromSearch(location.search);
+document.body.dataset.spinner = spinnerSkin;
+
+// Cosmetics are URL-addressable and share one progression save. The menu link only
+// changes ?spinner=; gameplay state, physics and score are deliberately untouched.
+const skinLink = el('skinLink');
+const nextSkinUrl = new URL(location.href);
+if (spinnerSkin === 'gator') nextSkinUrl.searchParams.delete('spinner');
+else nextSkinUrl.searchParams.set('spinner', 'gator');
+skinLink.href = nextSkinUrl.pathname + nextSkinUrl.search + nextSkinUrl.hash;
+skinLink.textContent = spinnerSkin === 'gator'
+  ? '◈ SPINNING: SLEEPY GATOR · SWITCH TO STEEL'
+  : '◈ TRY THE SLEEPY GATOR SPINNER';
 
 export const game = new Game(baseURL, {
   rendererOptions: {
@@ -192,8 +205,11 @@ async function boot() {
     if (state.phase === 'menu') {
       const cam = game.renderer.getCamera();
       menuYaw += deltaTimeInSec * (state.reducedMotion ? 0.025 : 0.08);
-      cam.position.set(Math.sin(menuYaw) * 5.8, 2.8, Math.cos(menuYaw) * 5.8);
-      cam.lookAt(0, 0.25, 0);
+      const portrait = cam.aspect < 1;
+      const distance = portrait ? 7.4 : 5.8;
+      cam.position.set(Math.sin(menuYaw) * distance, portrait ? 4.8 : 2.8,
+        Math.cos(menuYaw) * distance);
+      cam.lookAt(0, portrait ? -0.7 : 0.25, 0);
     }
     if (!state.paused) {
       director.tick(deltaTimeInSec);

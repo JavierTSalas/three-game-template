@@ -67,6 +67,11 @@ export const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
 export const clamp01 = n => clamp(n, 0, 1);
 export const wrap01 = n => ((n % 1) + 1) % 1;
 
+export function spinnerSkinFromSearch(search = '') {
+  const value = new URLSearchParams(search).get('spinner')?.toLowerCase();
+  return ['gator', 'alligator', 'croc', 'crocodile'].includes(value) ? 'gator' : 'steel';
+}
+
 // drive force falloff: 1 at rest → 0 at max speed (terminal velocity = maxSpeed)
 export const driveScale = (speed, maxSpeed) => Math.max(0, 1 - speed / maxSpeed);
 

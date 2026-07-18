@@ -41,7 +41,11 @@ export function buildCameraRig(camera, getPlayer, canvas) {
         state.camYaw = angleLerp(state.camYaw, headingOf(v.x, v.z), Math.min(1, dt * TUNE.CAM_YAW_RATE));
       }
 
-      const d = camDist(player.size), h = camHeight(player.size);
+      // Portrait needs more breathing room because the same circular arena is framed by
+      // a much narrower canvas. This changes only the lens rig, never movement/physics.
+      const portrait = camera.aspect < 1;
+      const d = camDist(player.size) * (portrait ? 1.62 : camera.aspect < 1.25 ? 1.22 : 1);
+      const h = camHeight(player.size) * (portrait ? 1.38 : 1);
       const tx = p.x + Math.sin(state.camYaw) * d;
       const tz = p.z + Math.cos(state.camYaw) * d;
       const ty = p.y + h;
