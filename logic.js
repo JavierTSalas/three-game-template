@@ -16,8 +16,11 @@ export const TUNE = {
   SPIN_START: 0.58,
   SPIN_DECAY: 0.017,
   SPIN_WOBBLE_DECAY: 0.018,
-  PULSE_HZ_MIN: 0.9,
-  PULSE_HZ_MAX: 3.25,
+  VISUAL_SPIN_MIN: 1.2,
+  VISUAL_SPIN_GAIN: 11,
+  VISUAL_SPIN_CURVE: 3,
+  PULSE_HZ_MIN: 0.28,
+  PULSE_HZ_MAX: 1.08,
   PULSE_PERFECT_WINDOW: 0.065,
   PULSE_GOOD_WINDOW: 0.17,
   PULSE_COOLDOWN: 0.12,
@@ -77,6 +80,11 @@ export const driveScale = (speed, maxSpeed) => Math.max(0, 1 - speed / maxSpeed)
 
 export const pulseFrequency = energy =>
   TUNE.PULSE_HZ_MIN + clamp01(energy) * (TUNE.PULSE_HZ_MAX - TUNE.PULSE_HZ_MIN);
+
+// Keep the physical toy readable at the start, then let earned spin build into
+// a visibly faster reward. Pulse timing has its own independent dial.
+export const visualSpinRate = energy => TUNE.VISUAL_SPIN_MIN
+  + TUNE.VISUAL_SPIN_GAIN * Math.pow(clamp01(energy), TUNE.VISUAL_SPIN_CURVE);
 
 export function pulseDistance(phase) {
   const p = wrap01(phase);

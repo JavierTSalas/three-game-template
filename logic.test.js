@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {
   TUNE, driveScale, moveVector, headingOf, angleLerp, camDist, camHeight, outOfWorld,
   clampFrameDelta, consumeFixedSteps, gradePulse, applyPulse, zoneForRadius, decaySpin,
-  advanceWobble, advanceFlow, scoreRate, pulseFrequency, spinnerSkinFromSearch,
+  advanceWobble, advanceFlow, scoreRate, pulseFrequency, visualSpinRate,
+  spinnerSkinFromSearch,
 } from './logic.js';
 
 test('spinner cosmetic is selected only from recognized URL parameter values', () => {
@@ -41,6 +42,15 @@ test('pulse grading wraps around the strike line', () => {
   assert.equal(gradePulse(TUNE.PULSE_PERFECT_WINDOW + 0.01), 'good');
   assert.equal(gradePulse(0.5), 'miss');
   assert.ok(pulseFrequency(1) > pulseFrequency(0));
+  assert.ok(pulseFrequency(TUNE.SPIN_START) < 0.8,
+    'the launch timing cue should take more than 1.25 seconds per lap');
+});
+
+test('visual spin starts readable and ramps with earned energy', () => {
+  const startRps = visualSpinRate(TUNE.SPIN_START) / (Math.PI * 2);
+  assert.ok(startRps < 0.6, `start rate ${startRps.toFixed(2)} rps should stay readable`);
+  assert.ok(visualSpinRate(1) > visualSpinRate(TUNE.SPIN_START) * 3);
+  assert.equal(visualSpinRate(-1), TUNE.VISUAL_SPIN_MIN);
 });
 
 test('perfect pulses reward energy, stability, flow, chain, and score', () => {

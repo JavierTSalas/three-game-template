@@ -1,7 +1,8 @@
 import { GameObject, THREE } from 'three-game-engine';
 import {
   TUNE, applyPulse, gradePulse, moveVector, driveScale, maxSpeedForEnergy,
-  pulseFrequency, wrap01, decaySpin, advanceWobble, clamp01, spinnerSkinFromSearch,
+  pulseFrequency, visualSpinRate, wrap01, decaySpin, advanceWobble, clamp01,
+  spinnerSkinFromSearch,
 } from '../logic.js';
 import { state } from './state.js';
 import { events } from './events.js';
@@ -25,7 +26,9 @@ export default class Player extends GameObject {
 
     this.topRoot = new THREE.Group();
     this.spinner = new THREE.Group();
+    this.pulseDial = new THREE.Group();
     this.topRoot.add(this.spinner);
+    this.topRoot.add(this.pulseDial);
     this.threeJSGroup.add(this.topRoot);
 
     const total = Number(localStorage.getItem('spinfinity:total') || 0);
@@ -82,7 +85,7 @@ export default class Player extends GameObject {
     );
     this.phaseMarker.position.set(0, this.skin === 'gator' ? 0.19 : 0.13,
       this.skin === 'gator' ? -0.75 : -0.59);
-    this.spinner.add(this.phaseMarker);
+    this.pulseDial.add(this.phaseMarker);
 
     this.strikeMarker = new THREE.Mesh(
       new THREE.BoxGeometry(0.055, 0.065, 0.16),
@@ -134,13 +137,23 @@ export default class Player extends GameObject {
     });
     this.metal = plush;
 
+    // Model the plush in its natural nose-forward pose, then stand that local
+    // nose-to-tail axis on the spinner's Y axis. The small upward offset leaves
+    // the snout tip on the floor/pivot, so rotation happens "on its nose"
+    // instead of around the middle of its belly.
+    this.gatorModel = new THREE.Group();
+    this.gatorModel.rotation.x = -Math.PI / 2;
+    this.gatorModel.scale.setScalar(0.78);
+    this.gatorModel.position.y = 0.315;
+    this.spinner.add(this.gatorModel);
+
     const add = (geometry, material, position, scale = [1, 1, 1], rotation = [0, 0, 0]) => {
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(...position);
       mesh.scale.set(...scale);
       mesh.rotation.set(...rotation);
       mesh.castShadow = true;
-      this.spinner.add(mesh);
+      this.gatorModel.add(mesh);
       return mesh;
     };
 
@@ -308,9 +321,10 @@ export default class Player extends GameObject {
   updateVisuals(dt, activeEnergy) {
     const p = this.getWorldPos();
     const energy = state.phase === 'menu' ? activeEnergy : state.spinEnergy;
-    this.spinAngle -= dt * (7 + energy * 56);
+    this.spinAngle -= dt * visualSpinRate(energy);
     this.precession += dt * (1.4 + (1 - energy) * 5.2 + state.wobble * 4);
-    this.spinner.rotation.y = this.spinAngle - state.pulsePhase * Math.PI * 2;
+    this.spinner.rotation.y = this.spinAngle;
+    this.pulseDial.rotation.y = -state.pulsePhase * Math.PI * 2;
 
     const wobble = state.phase === 'menu' ? 0.035 : state.wobble;
     const tilt = 0.025 + wobble * 0.64 + this.crashTilt;
