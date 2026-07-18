@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>__GAME_TITLE__</title>
+<title>SPINFINITY — Precision Top Arcade</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<meta name="theme-color" content="#101623">
+<link rel="icon" href="icons/spinfinity-192.png">
+<link rel="apple-touch-icon" href="icons/spinfinity-192.png">
+<meta name="theme-color" content="#02050d">
+<meta name="description" content="Steer the steel. Strike the pulse. Risk the rim.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,126 +16,202 @@
   @font-face { font-family: 'Lucky'; src: url('fonts/luckiestguy.woff2') format('woff2'); font-display: swap; }
   @font-face { font-family: 'Baloo'; src: url('fonts/baloo2-500.woff2') format('woff2'); font-display: swap; }
   :root {
-    /* the palette — init.mjs retints these (and manifest.json + theme-color above) */
-    --bg: #101623;      /* page + splash + panel background */
-    --ink: #eef4ff;     /* text */
-    --accent: #22c4a8;  /* the guy, primary buttons */
-    --accent2: #ffd166; /* highlights */
-    --display: 'Lucky', 'Trebuchet MS', system-ui, sans-serif;
-    --body: 'Baloo', 'Trebuchet MS', system-ui, sans-serif;
+    --bg:#02050d; --panel:#07111fd9; --ink:#eef8ff; --muted:#82a2b8;
+    --cyan:#57efff; --mint:#55ffc0; --gold:#ffd166; --pink:#ff4f9a; --violet:#a987ff;
+    --display:'Lucky','Trebuchet MS',system-ui,sans-serif;
+    --body:'Baloo','Trebuchet MS',system-ui,sans-serif;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
-  /* ONE size authority: fixed inset:0 — no vh/dvh/innerHeight anywhere. The page tracks
-     the layout viewport exactly (URL bar, fullscreen, rotation) and can never scroll.
-     Full story: docs/full-screen-pwa.md */
-  html, body { position: fixed; inset: 0; overflow: hidden; background: var(--bg); touch-action: none; overscroll-behavior: none; }
-  #gameCanvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
-  .overlay { position: fixed; inset: 0; pointer-events: none; font-family: var(--body); color: var(--ink); touch-action: none; }
-  #splash { position: fixed; inset: 0; background: var(--bg); z-index: 60; }
-  #splashCanvas { width: 100%; height: 100%; display: block; }
-  /* Controls (no HUD — chrome is controls only) */
-  #controls { display: none; }
-  #stickZone { position: fixed; left: 0; bottom: 0; width: 42vw; height: 55vh; pointer-events: auto; touch-action: none; }
-  #stick { position: absolute; left: max(76px, calc(env(safe-area-inset-left) + 64px)); bottom: 76px;
-           width: 92px; height: 92px; margin: -46px 0 0 -46px;
-           border-radius: 50%; background: #00000042; border: 2px solid #ffffff66; display: none; }
-  #stickNub { position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px;
-              border-radius: 50%; background: var(--accent); opacity: 0.85; box-shadow: 0 2px 8px #0007; }
-  #hopBtn { position: fixed; right: max(26px, calc(env(safe-area-inset-right) + 14px));
-            bottom: max(26px, calc(env(safe-area-inset-bottom) + 12px));
-            width: 76px; height: 76px; border-radius: 50%; border: 2px solid #ffffff66; background: #00000055;
-            color: var(--ink); font-family: var(--body); font-size: 13px; font-weight: 800; pointer-events: auto; touch-action: none;
-            text-shadow: 0 1px 3px #000; box-shadow: 0 2px 10px #0008; }
-  #hopBtn:active { background: color-mix(in srgb, var(--accent) 40%, transparent); }
-  #dashBtn { position: fixed; right: max(26px, calc(env(safe-area-inset-right) + 14px));
-             bottom: calc(max(26px, calc(env(safe-area-inset-bottom) + 12px)) + 88px);
-             width: 56px; height: 56px; border-radius: 50%; border: 2px solid #ffffff66; background: #00000055;
-             color: var(--ink); font-family: var(--body); font-size: 11px; font-weight: 800; line-height: 1.1; pointer-events: auto;
-             touch-action: none; text-shadow: 0 1px 3px #000; box-shadow: 0 2px 10px #0008; }
-  #dashBtn:active { background: color-mix(in srgb, var(--accent) 40%, transparent); }
-  #pauseBtn { position: fixed; top: max(8px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right));
-              width: 38px; height: 38px; border-radius: 50%; border: 1px solid #ffffff2e; background: #00000055;
-              color: var(--ink); font-size: 16px; pointer-events: auto; touch-action: none; cursor: pointer; }
-  /* Screens */
-  .screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: safe center;
-            justify-content: safe center; gap: 14px; background: color-mix(in srgb, var(--bg) 85%, transparent);
-            pointer-events: auto; text-align: center; font-family: var(--body); color: var(--ink);
-            overflow-y: auto; overflow-x: hidden; touch-action: pan-y; }
-  .screen h1 { font-family: var(--display); font-weight: 400; letter-spacing: 1px; font-size: clamp(30px, 7vw, 56px);
-               color: var(--accent); text-shadow: 0 4px 0 #0008; }
-  .screen p  { font-size: 15px; max-width: 520px; padding: 0 16px; line-height: 1.45; }
-  .screen button { font-family: var(--display); font-size: 20px; letter-spacing: 1px; padding: 12px 44px; border-radius: 999px; border: 0;
-                   background: var(--accent); color: var(--bg); box-shadow: 0 4px 0 #0008; cursor: pointer; }
-  .screen button.ghost { background: #ffffff10; color: var(--ink); box-shadow: 0 4px 0 #0006; border: 1px solid #ffffff2e; font-size: 15px; padding: 9px 30px; }
-  /* hero menu: transparent right side shows the live orbiting world; the RAIL scrolls
-     internally on short screens (page never scrolls) */
-  .screen.menu { background: none; flex-direction: row; justify-content: flex-start; align-items: stretch; text-align: left;
-                 overflow: hidden; touch-action: none; }
-  #menuRail { width: min(340px, 40vw); height: 100%; overflow-y: auto; overflow-x: hidden;
-              touch-action: pan-y; scrollbar-width: none;
-              padding: max(14px, env(safe-area-inset-top)) 26px max(14px, env(safe-area-inset-bottom))
-                       max(26px, env(safe-area-inset-left));
-              background: linear-gradient(90deg, color-mix(in srgb, var(--bg) 96%, transparent) 74%, transparent);
-              display: flex; flex-direction: column; gap: 11px; justify-content: safe center; }
-  #menuRail::-webkit-scrollbar { display: none; }
-  #menuRail h1 { font-size: clamp(34px, 5.6vw, 60px); line-height: 1; }
-  #menuRail button { width: fit-content; }
-  #menuRail .ver { font-size: 10px; color: color-mix(in srgb, var(--ink) 40%, transparent); }
-  #creditsPanel { display: none; position: absolute; inset: 0; background: color-mix(in srgb, var(--bg) 93%, transparent);
-                  flex-direction: column; align-items: safe center; justify-content: safe center; gap: 12px; text-align: center;
-                  overflow-y: auto; touch-action: pan-y; padding: 14px 0; pointer-events: auto; }
-  #creditsPanel.open { display: flex; }
-  #creditsPanel h2 { font-family: var(--display); font-weight: 400; letter-spacing: 2px; color: var(--accent);
-                     font-size: clamp(22px, 4vw, 34px); text-shadow: 0 3px 0 #0008; }
-  #creditsPanel .credits { max-width: min(560px, 90vw); font-size: 13px; line-height: 1.5;
-                           display: flex; flex-direction: column; gap: 7px; }
-  #creditsPanel .credits b { color: var(--accent2); }
-  /* Rotate hint (portrait only) — portrait game? flip this media query + manifest orientation */
-  #rotateHint { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 50;
-                align-items: center; justify-content: center; font-size: 22px; font-weight: 800; text-align: center; padding: 24px; }
-  @media (orientation: portrait) { #rotateHint { display: flex; } }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-user-select:none; user-select:none; }
+  html,body { position:fixed; inset:0; overflow:hidden; background:var(--bg); touch-action:none; overscroll-behavior:none; }
+  body { color:var(--ink); font-family:var(--body); }
+  button { -webkit-tap-highlight-color:transparent; }
+  #gameCanvas { position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+  .overlay { position:fixed; inset:0; pointer-events:none; touch-action:none; }
+  #splash { position:fixed; inset:0; background:var(--bg); z-index:60; }
+  #splashCanvas { width:100%; height:100%; display:block; }
+
+  #controls { display:none; z-index:8; }
+  #stickZone { position:fixed; left:0; bottom:0; width:43vw; height:58vh; pointer-events:auto; touch-action:none; }
+  #stick { position:absolute; width:98px; height:98px; margin:-49px 0 0 -49px; border-radius:50%;
+    border:1px solid #9cecff88; background:radial-gradient(circle,#17415b33,#02050dbb);
+    box-shadow:0 0 24px #29dcff22,inset 0 0 18px #67efff22; display:none; }
+  #stickNub { position:absolute; left:50%; top:50%; width:42px; height:42px; margin:-21px 0 0 -21px;
+    border-radius:50%; background:linear-gradient(145deg,#e9fdff,#4fe4f8 58%,#148ca3);
+    box-shadow:0 0 18px #40efffbb,0 4px 12px #000a; }
+  .action { position:fixed; border-radius:50%; color:var(--ink); font:800 11px/1 var(--body);
+    pointer-events:auto; touch-action:none; cursor:pointer; backdrop-filter:blur(8px);
+    background:radial-gradient(circle at 40% 30%,#244d63cc,#050b16dd 70%);
+    border:1px solid #91f5ff99; box-shadow:0 0 0 5px #07101a77,0 0 22px #37e7ff33,inset 0 0 16px #54f3ff22;
+    text-shadow:0 1px 4px #000; transition:transform .08s,filter .08s; }
+  .action:active { transform:scale(.9); filter:brightness(1.6); }
+  #hopBtn { right:max(28px,calc(env(safe-area-inset-right) + 18px)); bottom:max(26px,calc(env(safe-area-inset-bottom) + 14px));
+    width:82px; height:82px; color:#fff5bc; border-color:#ffe286bb; box-shadow:0 0 0 5px #1c140977,0 0 25px #ffc34b44,inset 0 0 17px #ffe66d33; }
+  #hopBtn strong { display:block; font:400 16px/1 var(--display); letter-spacing:.7px; }
+  #dashBtn { right:max(40px,calc(env(safe-area-inset-right) + 30px)); bottom:calc(max(26px,calc(env(safe-area-inset-bottom) + 14px)) + 100px);
+    width:60px; height:60px; color:#ffc8e2; border-color:#ff80b9aa; box-shadow:0 0 0 4px #1a081177,0 0 20px #ff4f9a44,inset 0 0 14px #ff6caa33; }
+  #pauseBtn { position:fixed; top:max(9px,env(safe-area-inset-top)); right:max(12px,env(safe-area-inset-right));
+    width:38px; height:38px; border-radius:50%; border:1px solid #b9e9ff44; background:#030814aa; color:var(--ink);
+    font-size:15px; pointer-events:auto; cursor:pointer; backdrop-filter:blur(8px); }
+
+  #hud { position:fixed; inset:0; pointer-events:none; }
+  #scoreBlock { position:absolute; top:max(9px,env(safe-area-inset-top)); left:max(14px,env(safe-area-inset-left));
+    text-shadow:0 2px 10px #000; }
+  #scoreValue { font:400 clamp(28px,6vw,50px)/.9 var(--display); letter-spacing:1px; color:#f4fbff; }
+  #scoreRate { margin-top:3px; color:var(--mint); font-size:11px; letter-spacing:1.5px; }
+  #flowBlock { position:absolute; top:max(11px,env(safe-area-inset-top)); left:50%; transform:translateX(-50%);
+    text-align:center; min-width:140px; }
+  #flowValue { font:400 clamp(19px,3.6vw,30px)/1 var(--display); color:var(--cyan); text-shadow:0 0 16px #23dfff; }
+  #zoneValue { margin-top:3px; font-size:10px; letter-spacing:2.6px; color:#b7d8e6; }
+  #meters { position:absolute; left:max(14px,env(safe-area-inset-left)); bottom:max(14px,env(safe-area-inset-bottom));
+    width:min(220px,29vw); display:grid; gap:6px; }
+  .meterRow { display:grid; grid-template-columns:48px 1fr; gap:7px; align-items:center; color:#94b5c5; font-size:9px; letter-spacing:1.3px; }
+  .track { height:7px; border-radius:99px; overflow:hidden; background:#02050dcc; border:1px solid #9ccfe833; box-shadow:0 2px 8px #0009; }
+  .fill { height:100%; width:50%; border-radius:inherit; transition:width .12s; }
+  #energyFill { background:linear-gradient(90deg,#1d9cb8,#70f5ff,#fff7c6); box-shadow:0 0 8px #54eeff; }
+  #wobbleFill { background:linear-gradient(90deg,#55ffc0,#ffd166 55%,#ff4f75); box-shadow:0 0 8px #ff647e; }
+  #patternValue { position:absolute; right:max(18px,env(safe-area-inset-right)); top:max(55px,calc(env(safe-area-inset-top) + 47px));
+    color:#7999ab; font-size:9px; letter-spacing:2px; }
+  #gradeFlash { position:absolute; left:50%; top:30%; transform:translate(-50%,-50%) scale(.8); opacity:0;
+    font:400 clamp(24px,5vw,46px)/1 var(--display); letter-spacing:2px; text-shadow:0 0 18px currentColor,0 4px 0 #0008; }
+  #gradeFlash.show { animation:grade .62s cubic-bezier(.18,.8,.2,1); }
+  @keyframes grade { 0%{opacity:0;transform:translate(-50%,-50%) scale(.5)} 20%{opacity:1;transform:translate(-50%,-50%) scale(1.18)}
+    72%{opacity:1;transform:translate(-50%,-70%) scale(1)} 100%{opacity:0;transform:translate(-50%,-100%) scale(.92)} }
+  #hint { position:absolute; left:50%; bottom:max(16px,env(safe-area-inset-bottom)); transform:translateX(-50%);
+    color:#d7edf6; background:#030916bb; border:1px solid #8ddfff44; border-radius:99px; padding:7px 13px;
+    font-size:10px; letter-spacing:.8px; backdrop-filter:blur(8px); transition:opacity .4s; }
+
+  .screen { position:fixed; inset:0; z-index:20; display:flex; align-items:center; justify-content:center;
+    pointer-events:auto; overflow:hidden; color:var(--ink); }
+  .menu { justify-content:flex-start; background:linear-gradient(90deg,#02050df8 0%,#02050de8 31%,#02050d55 55%,transparent 76%); }
+  #menuRail { width:min(390px,48vw); min-width:278px; height:100%; display:flex; flex-direction:column; justify-content:center;
+    align-items:flex-start; gap:9px; overflow-y:auto; scrollbar-width:none;
+    padding:max(14px,env(safe-area-inset-top)) 22px max(14px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left)); }
+  #menuRail::-webkit-scrollbar { display:none; }
+  .eyebrow { color:var(--cyan); font-size:9px; letter-spacing:4px; text-transform:uppercase; }
+  .screen h1 { font:400 clamp(39px,7vw,72px)/.92 var(--display); letter-spacing:2px;
+    background:linear-gradient(180deg,#fff 0%,#bcecf8 45%,#548398 55%,#e9fbff 72%,#5da4ba 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 4px 0 #000a) drop-shadow(0 0 22px #47dcff44); }
+  .tagline { color:#a5c3d1; max-width:310px; font-size:13px; line-height:1.35; }
+  .tagline b { color:#fff3ae; }
+  .stats { display:flex; gap:16px; margin:3px 0; }
+  .stat { color:#7595a8; font-size:8px; letter-spacing:1.5px; }
+  .stat strong { display:block; margin-top:1px; color:#f4fbff; font:400 18px/1 var(--display); letter-spacing:.5px; }
+  .screen button { border:0; cursor:pointer; border-radius:999px; font:400 17px/1 var(--display); letter-spacing:1px;
+    padding:11px 34px; color:#061019; background:linear-gradient(180deg,#fff5af,#ffc648);
+    box-shadow:0 4px 0 #855810,0 0 24px #ffc94a55; }
+  .screen button:active { transform:translateY(3px); box-shadow:0 1px 0 #855810; }
+  .screen button.ghost { background:#081423bb; color:#bfe9f7; border:1px solid #88dfff44; box-shadow:none;
+    padding:8px 18px; font:700 10px/1 var(--body); letter-spacing:1px; }
+  .menuActions { display:flex; flex-wrap:wrap; gap:7px; max-width:310px; }
+  .controlLegend { color:#658696; font-size:9px; letter-spacing:.7px; }
+  .ver { color:#4f6b7a; font-size:8px; letter-spacing:2px; }
+  #creditsPanel { display:none; position:absolute; inset:0; z-index:2; background:#02050df7; flex-direction:column;
+    align-items:center; justify-content:center; gap:12px; text-align:center; padding:18px; }
+  #creditsPanel.open { display:flex; }
+  #creditsPanel h2 { color:var(--cyan); font:400 30px/1 var(--display); letter-spacing:2px; }
+  #creditsPanel .credits { max-width:580px; color:#9db8c5; font-size:12px; line-height:1.45; }
+  #creditsPanel b { color:#f5fcff; }
+
+  #pauseScreen,#resultScreen { background:#02050de8; backdrop-filter:blur(11px); flex-direction:column; gap:12px; text-align:center; }
+  #pauseScreen h1,#resultScreen h1 { font-size:clamp(31px,6vw,54px); }
+  .buttonRow { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  #resultReason { color:var(--pink); font-size:10px; letter-spacing:3px; }
+  #resultScore { font:400 clamp(44px,9vw,78px)/.9 var(--display); color:#fff; text-shadow:0 0 20px #52e8ff55; }
+  #resultBest { color:var(--gold); font-size:11px; letter-spacing:1.5px; }
+  #resultStats { display:flex; gap:15px; color:#87a4b4; font-size:10px; }
+  #resultStats b { display:block; color:#eef9ff; font-size:15px; }
+  #newBest { color:var(--gold); font:400 18px/1 var(--display); letter-spacing:2px; display:none; animation:pulseBest .7s infinite alternate; }
+  @keyframes pulseBest { to { transform:scale(1.08); text-shadow:0 0 20px #ffd166; } }
+
+  #rotateHint { display:none; position:fixed; inset:0; z-index:50; background:var(--bg); color:var(--ink);
+    align-items:center; justify-content:center; font-size:20px; text-align:center; padding:24px; }
+  body.reduced-motion *,body.reduced-motion *::before,body.reduced-motion *::after { animation-duration:.001ms!important; animation-iteration-count:1!important; transition-duration:.001ms!important; }
+  @media (orientation:portrait) { #rotateHint { display:flex; } }
+  @media (max-height:440px) {
+    #menuRail { gap:6px; } .screen h1 { font-size:clamp(36px,9vh,52px); }
+    .tagline { font-size:11px; } .action { transform:scale(.9); transform-origin:bottom right; }
+    #dashBtn { bottom:108px; } #meters { width:min(210px,32vw); }
+  }
 </style>
 </head>
 <body>
   <canvas id="gameCanvas"></canvas>
   <div id="splash"><canvas id="splashCanvas"></canvas></div>
+
   <div id="controls" class="overlay">
     <div id="stickZone"><div id="stick"><div id="stickNub"></div></div></div>
-    <button id="hopBtn">HOP</button>
-    <button id="dashBtn">💨<br>DASH</button>
-    <button id="pauseBtn" title="pause">⏸</button>
+    <button id="hopBtn" class="action"><strong>PULSE</strong>SPACE</button>
+    <button id="dashBtn" class="action">OVER<br>DRIVE</button>
+    <button id="pauseBtn" title="pause" aria-label="Pause">Ⅱ</button>
+    <div id="hud">
+      <div id="scoreBlock"><div id="scoreValue">0</div><div id="scoreRate">+0 / SEC</div></div>
+      <div id="flowBlock"><div id="flowValue">FLOW ×1.0</div><div id="zoneValue">CENTER · ×1</div></div>
+      <div id="meters">
+        <div class="meterRow"><span>SPIN</span><div class="track"><div id="energyFill" class="fill"></div></div></div>
+        <div class="meterRow"><span>WOBBLE</span><div class="track"><div id="wobbleFill" class="fill"></div></div></div>
+      </div>
+      <div id="patternValue">PATTERN · SWEEP</div>
+      <div id="gradeFlash">PERFECT</div>
+      <div id="hint">STEER TO START · TAP PULSE WHEN THE MARKERS MEET</div>
+    </div>
   </div>
+
   <div id="startScreen" class="screen menu">
     <div id="menuRail">
-      <h1>__GAME_TITLE__</h1>
-      <button id="playBtn">PLAY</button>
-      <button id="menuFsBtn" class="ghost">⛶ FULLSCREEN</button>
-      <button id="creditsBtn" class="ghost">♥ CREDITS</button>
-      <button id="refreshBtn" class="ghost">↻ REFRESH APP</button>
-      <div class="ver">v1.0</div>
+      <div class="eyebrow">precision top arcade</div>
+      <h1>SPINFINITY</h1>
+      <p class="tagline">Steer the steel. Strike the rotating <b>PULSE</b>. Risk the rim. Keep the number climbing.</p>
+      <div class="stats">
+        <div class="stat">BEST RUN<strong id="menuBest">0</strong></div>
+        <div class="stat">TOTAL SPIN<strong id="menuTotal">0</strong></div>
+      </div>
+      <button id="playBtn">DROP THE TOP</button>
+      <div class="controlLegend">WASD / ARROWS TO STEER · SPACE TO PULSE · E / SHIFT TO OVERDRIVE</div>
+      <div class="menuActions">
+        <button id="menuFsBtn" class="ghost">⛶ FULLSCREEN</button>
+        <button id="creditsBtn" class="ghost">CREDITS</button>
+        <button id="refreshBtn" class="ghost">↻ REFRESH</button>
+      </div>
+      <div class="ver">ONE MORE SPIN · v1.0</div>
     </div>
     <div id="creditsPanel">
       <h2>CREDITS</h2>
       <div class="credits">
-        <p><b>A game by __AUTHOR__</b>.</p>
-        <p><b>Engine:</b> three-game-engine by Wes Unwin (MIT), bundling
-           <b>three.js</b> (MIT), <b>Rapier</b> physics by Dimforge (Apache-2.0), and three-mesh-ui (MIT).</p>
-        <p><b>Fonts:</b> Luckiest Guy by Astigmatic &amp; Baloo 2 by Ek Type (both SIL Open Font License).</p>
-        <p><b>Tools:</b> webpack · Playwright · Blender · gltf-transform · Vercel.</p>
-        <p>Built from <b>three-game-template</b>.</p>
+        <p><b>SPINFINITY by Javier Salas</b> — original game design, procedural art and audio.</p>
+        <p><b>Engine:</b> three-game-engine by Wes Unwin, bundling three.js, Rapier and three-mesh-ui.</p>
+        <p><b>Fonts:</b> Luckiest Guy by Astigmatic and Baloo 2 by Ek Type.</p>
       </div>
       <button id="creditsClose" class="ghost">✕ BACK</button>
     </div>
   </div>
+
   <div id="pauseScreen" class="screen" style="display:none;">
-    <h1 style="font-size:clamp(26px, 5vw, 42px);">PAUSED</h1>
-    <button id="resumeBtn">RESUME</button>
-    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+    <div class="eyebrow">gyro suspended</div>
+    <h1>PAUSED</h1>
+    <button id="resumeBtn">KEEP SPINNING</button>
+    <div class="buttonRow">
       <button id="pauseRestartBtn" class="ghost">↻ RESTART</button>
       <button id="pauseFsBtn" class="ghost">⛶ FULLSCREEN</button>
       <button id="soundBtn" class="ghost">🔊 SOUND ON</button>
+      <button id="motionBtn" class="ghost">✦ MOTION FULL</button>
     </div>
   </div>
-  <div id="rotateHint" class="overlay">🔄<br>Rotate your phone sideways —<br>this one plays in landscape.</div>
+
+  <div id="resultScreen" class="screen" style="display:none;">
+    <div id="resultReason">SPIN OUT</div>
+    <div id="newBest">NEW PERSONAL BEST</div>
+    <h1>RUN BANKED</h1>
+    <div id="resultScore">0</div>
+    <div id="resultBest">BEST 0 · TOTAL 0</div>
+    <div id="resultStats">
+      <span>PERFECTS<b id="statPerfect">0</b></span>
+      <span>BEST CHAIN<b id="statChain">0</b></span>
+      <span>GATES<b id="statGates">0</b></span>
+      <span>SAVES<b id="statSaves">0</b></span>
+    </div>
+    <button id="spinAgainBtn">ONE MORE SPIN</button>
+  </div>
+
+  <div id="rotateHint">↻<br>Rotate sideways to spin.</div>
 </body>
 </html>

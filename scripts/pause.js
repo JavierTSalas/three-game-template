@@ -6,7 +6,8 @@ import { bindFsButton } from './fullscreen.js';
 // gameplay systems with state.paused. NEVER game.pause(): its dt accumulates and the
 // physics explode on resume. Esc or the ⏸ button toggles. The pause screen doubles as
 // the settings page (fullscreen + sound).
-const SOUND_KEY = '__GAME_ID__:sound';
+const SOUND_KEY = 'spinfinity:sound';
+const MOTION_KEY = 'spinfinity:motion';
 
 export function buildPause(game, director, audio) {
   const el = id => document.getElementById(id);
@@ -35,7 +36,7 @@ export function buildPause(game, director, audio) {
   });
   bindFsButton(el('pauseFsBtn'));
 
-  // sound toggle — the example "setting", persisted per game id
+  // Accessibility/settings persist independently from run progress.
   const sb = el('soundBtn');
   const applySound = () => {
     const off = localStorage.getItem(SOUND_KEY) === 'off';
@@ -47,6 +48,22 @@ export function buildPause(game, director, audio) {
     applySound();
   });
   applySound();
+
+  const mb = el('motionBtn');
+  const applyMotion = () => {
+    const reduced = localStorage.getItem(MOTION_KEY) === 'reduced';
+    state.reducedMotion = reduced;
+    document.body.classList.toggle('reduced-motion', reduced);
+    mb.textContent = reduced ? '✦ MOTION REDUCED' : '✦ MOTION FULL';
+  };
+  if (!localStorage.getItem(MOTION_KEY) && matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+    localStorage.setItem(MOTION_KEY, 'reduced');
+  }
+  mb.addEventListener('click', () => {
+    localStorage.setItem(MOTION_KEY, state.reducedMotion ? 'full' : 'reduced');
+    applyMotion();
+  });
+  applyMotion();
 
   return { toggle, pause, resume };
 }

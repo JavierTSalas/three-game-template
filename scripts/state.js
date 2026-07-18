@@ -1,9 +1,64 @@
-// Single shared mutable game state. Systems import and mutate — no getters, no events.
+import { TUNE } from '../logic.js';
+
+// Single shared mutable state. Systems import and mutate; restart resets through resetRun().
 export const state = {
-  phase: 'boot', // boot | menu | ready | playing | won | lost
-  paused: false,       // pause menu up: physics disabled, gameplay systems gated
-  camYaw: 0,           // camera orbit angle — the ONE yaw authority (camera.js writes it)
-  everMoved: false,    // first real input flips ready → playing (director.tick)
-  hopRequested: false, // one-frame edges — buttons/keys set, player consumes per frame
-  dashRequested: false,
+  phase: 'boot', // boot | menu | ready | playing | lost
+  paused: false,
+  reducedMotion: false,
+  camYaw: 0,
+  everMoved: false,
+  pulseRequested: false,
+  overdriveRequested: false,
+
+  score: 0,
+  scoreRate: 0,
+  bestScore: 0,
+  totalSpin: 0,
+  elapsed: 0,
+  spinEnergy: TUNE.SPIN_START,
+  wobble: 0.08,
+  flow: TUNE.FLOW_MIN,
+  chain: 0,
+  bestChain: 0,
+  pulsePhase: 0.36,
+  lastGrade: '',
+  perfects: 0,
+  goods: 0,
+  misses: 0,
+  gates: 0,
+  saves: 0,
+  zone: 'CENTER',
+  zoneMultiplier: 1,
+  overdrive: 0,
+  pattern: 'SWEEP',
+  crashReason: '',
 };
+
+export function resetRun() {
+  Object.assign(state, {
+    paused: false,
+    everMoved: false,
+    pulseRequested: false,
+    overdriveRequested: false,
+    score: 0,
+    scoreRate: 0,
+    elapsed: 0,
+    spinEnergy: TUNE.SPIN_START,
+    wobble: 0.08,
+    flow: TUNE.FLOW_MIN,
+    chain: 0,
+    bestChain: 0,
+    pulsePhase: 0.36,
+    lastGrade: '',
+    perfects: 0,
+    goods: 0,
+    misses: 0,
+    gates: 0,
+    saves: 0,
+    zone: 'CENTER',
+    zoneMultiplier: 1,
+    overdrive: 0,
+    pattern: 'SWEEP',
+    crashReason: '',
+  });
+}

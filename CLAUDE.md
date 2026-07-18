@@ -2,11 +2,11 @@
 
 ## What this is
 
-**__GAME_TITLE__** — a mobile-landscape browser game built on **three-game-engine** v0.10
+**SPINFINITY** — a mobile-landscape browser game built on **three-game-engine** v0.10
 (bundles three 0.168 + rapier3d-compat 0.11 + three-mesh-ui). Webpack build, DOM overlays for
 menus/controls, procedural WebAudio, PWA-installable, deployed on Vercel (push `main` → prod).
-Born from `three-game-template`; the shipped "game" is a platformer sandbox (roll, hop, dash)
-you replace with your mechanic.
+Born from `three-game-template`; the shipped game is a precision top arcade loop: steer,
+pulse on beat, overdrive, manage wobble, and bank an ever-growing lifetime score.
 **Viewport/fullscreen/PWA: `docs/full-screen-pwa.md`** (one-ruler rule, pitfall table,
 cache-busting — read before touching canvas sizing, overlays, or the service worker).
 **Models/conversion: `docs/asset-pipeline.md`** (text-to-3D, FBX→GLB, black-model triage,
@@ -34,8 +34,8 @@ are exposed for introspection. Judge motion by driving it, not from a single fra
   here, never inline. Add your game's math here first, with tests.
 - `scripts/state.js` — single shared mutable state (phase/paused/camYaw/input edges);
   `scripts/events.js` — tiny pub/sub. Events in use: `runstart, hop, dash, bump, win, lose`.
-- `scripts/player.js` — the ball-guy: per-frame impulses (NEVER rapier `addForce`), joystick +
-  WASD + arrow fallback, hop, dash burst, squash spring, blob shadow, camera-rig update.
+- `scripts/player.js` — the steel top: per-frame impulses (NEVER rapier `addForce`), joystick +
+  WASD + arrow fallback, pulse timing, overdrive, wobble recovery, shadow, camera-rig update.
 - `scripts/director.js` — run lifecycle: phases `boot|menu|ready|playing|won|lost`, restart
   with the loadScene-in-flight guard, `won()`/`lost()` for your win conditions, platform
   spawning via `scripts/spawn.js` (THE runtime-spawn pattern — see gotchas).

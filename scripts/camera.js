@@ -26,7 +26,9 @@ export function buildCameraRig(camera, getPlayer, canvas) {
   window.addEventListener('pointercancel', end);
 
   return {
-    shake(mag) { shakeMag = Math.max(shakeMag, mag); },
+    shake(mag) {
+      if (!state.reducedMotion) shakeMag = Math.max(shakeMag, mag);
+    },
     update(dt) {
       const player = getPlayer();
       if (!player?.isLoaded?.()) return;
@@ -54,7 +56,7 @@ export function buildCameraRig(camera, getPlayer, canvas) {
         shakeMag *= Math.exp(-dt * 7);
       }
 
-      look.set(p.x, p.y + player.size * 0.4, p.z);
+      look.set(p.x, p.y + player.size * 0.62, p.z);
       camera.lookAt(look);
     },
   };
