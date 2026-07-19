@@ -106,6 +106,13 @@ are exposed for introspection. Judge motion by driving it, not from a single fra
 
 ## Game development requirements (non-negotiable)
 
+- **Are you in the template?** Run `git remote -v` first. If origin is
+  `three-game-template`, this is the TEMPLATE — never build a specific game here. Birth the
+  game first: `gh repo create <game> --template JavierTSalas/three-game-template --private
+  --clone`, work there, and create a NEW Vercel project imported from THAT repo. Never run
+  `vercel link`/`vercel deploy`/`vercel git connect` from the template checkout — that
+  attaches a game-named Vercel project to the template repo, and every future template push
+  will overwrite the game's production URL (this happened once; don't repeat it).
 - **Plan before code.** Before implementing any game idea (new game, new mode, or a major
   mechanic), write a design artifact first — a PRD/GDD in `docs/<game-name>-prd.md` covering
   at least: pitch, core loop, mechanics, controls, win/lose conditions, tutorialization plan,
