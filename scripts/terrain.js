@@ -1,99 +1,72 @@
-import { GameObject, THREE } from 'three-game-engine';
-import { TUNE } from '../logic.js';
+import { GameObject, THREE, RAPIER } from 'three-game-engine';
 
+// The level shell: checkered ground, boundary fence (visible + colliders), sun, sky, fog.
+// One theme — retint here (or grow a THEMES table when the second level shows up).
 const T = {
-  radius: TUNE.ARENA_RADIUS,
-  sky: 0x02050d,
-  fogNear: 18,
-  fogFar: 48,
-  steel: 0x101a28,
-  side: 0x050910,
+  bound: 12, ground: 0x3f5e52, check: 0x36544a, checkOpacity: 0.35,
+  sky: 0xbfd9e8, fogNear: 26, fogFar: 80,
+  fence: 0x7c8aa0, fenceH: 2.2, sun: 1.4, sunColor: 0xfff3d6,
 };
 
 export default class Terrain extends GameObject {
   afterLoaded() {
-    const g = this.threeJSGroup;
-    const R = T.radius;
+    const g = this.threeJSGroup; // group is at world y=-0.5 (see scene JSON)
+    const B = T.bound;
 
-    const arena = new THREE.Mesh(
-      new THREE.CylinderGeometry(R, R + 0.28, 0.9, 96),
-      new THREE.MeshPhysicalMaterial({ color: T.steel, metalness: 0.72, roughness: 0.34,
-        clearcoat: 0.36, clearcoatRoughness: 0.25 })
+    // ground — checkered two-tone so motion/scale reads
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(B * 2, B * 2, 16, 16),
+      new THREE.MeshStandardMaterial({ color: T.ground, roughness: 1 })
     );
-    arena.receiveShadow = true;
-    g.add(arena);
-
-    const side = new THREE.Mesh(
-      new THREE.CylinderGeometry(R + 0.04, R + 0.34, 0.82, 96, 1, true),
-      new THREE.MeshStandardMaterial({ color: T.side, metalness: 0.8, roughness: 0.42,
-        side: THREE.DoubleSide })
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = 0.5; // top of the ground collider (local)
+    g.add(ground);
+    const check = new THREE.Mesh(
+      new THREE.PlaneGeometry(B * 2, B * 2),
+      new THREE.MeshBasicMaterial({ color: T.check, transparent: true, opacity: T.checkOpacity, map: checkerTexture() })
     );
-    side.position.y = -0.08;
-    g.add(side);
+    check.rotation.x = -Math.PI / 2;
+    check.position.y = 0.505;
+    g.add(check);
 
-    const ringData = [
-      [0.3, 3.35, 0x183d52, 0.34],
-      [3.48, 6.35, 0x0f5263, 0.28],
-      [6.48, 8.75, 0x2d2867, 0.3],
-      [8.88, R - 0.08, 0x69214c, 0.42],
+    // boundary walls: visible + fixed colliders (engine colliders can't be offset within one body → own bodies)
+    const world = this.getScene().rapierWorld;
+    const fenceMat = new THREE.MeshStandardMaterial({ color: T.fence, roughness: 0.9 });
+    const H = T.fenceH, W = 0.15;
+    const walls = [
+      { x: 0, z: -B, w: B * 2, d: W }, { x: 0, z: B, w: B * 2, d: W },
+      { x: -B, z: 0, w: W, d: B * 2 }, { x: B, z: 0, w: W, d: B * 2 },
     ];
-    for (const [inner, outer, color, opacity] of ringData) {
-      const ring = new THREE.Mesh(
-        new THREE.RingGeometry(inner, outer, 96),
-        new THREE.MeshBasicMaterial({ color, transparent: true, opacity,
-          side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
-      );
-      ring.rotation.x = -Math.PI / 2;
-      ring.position.y = 0.458;
-      g.add(ring);
+    for (const { x, z, w, d } of walls) {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(w, H, d), fenceMat);
+      m.position.set(x, 0.5 + H / 2, z);
+      g.add(m);
+      const body = world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(x, H / 2, z));
+      world.createCollider(RAPIER.ColliderDesc.cuboid(w / 2, H / 2, d / 2).setFriction(0.4), body);
     }
 
-    // Thin inlays define risk bands and read cleanly on a phone.
-    for (const [r, color] of [[3.4, 0x2ed9ff], [6.4, 0x4bf5c5], [8.8, 0xb884ff], [10.43, 0xff4f9a]]) {
-      const inlay = new THREE.Mesh(
-        new THREE.TorusGeometry(r, r === 10.43 ? 0.055 : 0.018, 8, 128),
-        new THREE.MeshBasicMaterial({ color, transparent: true, opacity: r === 10.43 ? 0.9 : 0.54,
-          blending: THREE.AdditiveBlending, depthWrite: false })
-      );
-      inlay.rotation.x = Math.PI / 2;
-      inlay.position.y = 0.47;
-      g.add(inlay);
-    }
-
-    const linePositions = [];
-    for (let i = 0; i < 24; i++) {
-      const a = i / 24 * Math.PI * 2;
-      linePositions.push(Math.cos(a) * 0.6, 0.466, Math.sin(a) * 0.6,
-        Math.cos(a) * (R - 0.22), 0.466, Math.sin(a) * (R - 0.22));
-    }
-    const lineGeo = new THREE.BufferGeometry();
-    lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
-    g.add(new THREE.LineSegments(lineGeo,
-      new THREE.LineBasicMaterial({ color: 0x87b8cc, transparent: true, opacity: 0.09 })));
-
-    const center = new THREE.Mesh(
-      new THREE.CircleGeometry(1.2, 64),
-      new THREE.MeshBasicMaterial({ color: 0x58e8ff, transparent: true, opacity: 0.11,
-        blending: THREE.AdditiveBlending, depthWrite: false })
-    );
-    center.rotation.x = -Math.PI / 2;
-    center.position.y = 0.471;
-    g.add(center);
-
-    const hemi = new THREE.HemisphereLight(0x9edaff, 0x07080d, 1.7);
-    g.add(hemi);
-    const key = new THREE.DirectionalLight(0xffffff, 3.1);
-    key.position.set(5, 12, 7);
-    g.add(key);
-    const cyan = new THREE.PointLight(0x28dcff, 18, 16, 2);
-    cyan.position.set(-5, 4, -3);
-    g.add(cyan);
-    const magenta = new THREE.PointLight(0xff3da4, 14, 15, 2);
-    magenta.position.set(6, 3, 4);
-    g.add(magenta);
-
+    // sun + sky (scene JSON's fog declared first — valid values dodge the engine's
+    // setFog(null) bug; we re-set it here so theme edits live in one file)
+    const sun = new THREE.DirectionalLight(T.sunColor, T.sun);
+    sun.position.set(8, 14, 6);
+    g.add(sun);
     const scene3 = this.getScene().threeJSScene;
     scene3.background = new THREE.Color(T.sky);
     scene3.fog = new THREE.Fog(T.sky, T.fogNear, T.fogFar);
   }
+}
+
+function checkerTexture() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 256;
+  const ctx = c.getContext('2d');
+  for (let y = 0; y < 8; y++)
+    for (let x = 0; x < 8; x++) {
+      ctx.fillStyle = (x + y) % 2 ? '#ffffff00' : '#ffffff18';
+      ctx.fillRect(x * 32, y * 32, 32, 32);
+    }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(6, 6);
+  return tex;
 }

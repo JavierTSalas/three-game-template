@@ -4,8 +4,7 @@
     {
       "type": "rigidBody",
       "rigidBodyType": "dynamic",
-      "enabledRotations": { "x": false, "y": false, "z": false },
-      "colliders": [{ "type": "ball", "radius": 0.3, "density": 8, "friction": 0.45, "restitution": 0.12 }]
+      "colliders": [{ "type": "ball", "radius": 0.24, "density": 5, "friction": 0.8, "restitution": 0.25 }]
     }
   ]
 }

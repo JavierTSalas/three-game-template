@@ -1,8 +1,8 @@
 {
   "gravity": { "x": 0, "y": -9.81, "z": 0 },
-  "fog": { "color": "#02050d", "near": 18, "far": 48 },
+  "fog": { "color": "#bfd9e8", "near": 26, "far": 80 },
   "gameObjects": [
-    { "type": "terrain", "name": "terrain", "position": { "x": 0, "y": -0.45, "z": 0 } },
-    { "type": "player", "name": "player", "position": { "x": 0, "y": 0.32, "z": 0 } }
+    { "type": "terrain", "name": "terrain", "position": { "x": 0, "y": -0.5, "z": 0 } },
+    { "type": "player", "name": "player", "position": { "x": 0, "y": 0.6, "z": 0 } }
   ]
 }

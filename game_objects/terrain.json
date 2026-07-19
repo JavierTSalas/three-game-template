@@ -4,8 +4,8 @@
     {
       "type": "rigidBody",
       "rigidBodyType": "fixed",
-      "colliders": [{ "type": "cylinder", "halfHeight": 0.45, "radius": 10.5, "friction": 0.78 }]
+      "colliders": [{ "type": "cuboid", "hx": 12, "hy": 0.5, "hz": 12, "friction": 0.9 }]
     },
-    { "type": "light", "lightType": "AmbientLight", "intensity": 0.3 }
+    { "type": "light", "lightType": "AmbientLight", "intensity": 0.65 }
   ]
 }

@@ -2,11 +2,11 @@
 
 ## What this is
 
-**SPINFINITY** — a mobile-landscape browser game built on **three-game-engine** v0.10
+**__GAME_TITLE__** — a mobile-landscape browser game built on **three-game-engine** v0.10
 (bundles three 0.168 + rapier3d-compat 0.11 + three-mesh-ui). Webpack build, DOM overlays for
 menus/controls, procedural WebAudio, PWA-installable, deployed on Vercel (push `main` → prod).
-Born from `three-game-template`; the shipped game is a precision top arcade loop: steer,
-pulse on beat, overdrive, manage wobble, and bank an ever-growing lifetime score.
+Born from `three-game-template`; the shipped "game" is a platformer sandbox (roll, hop, dash)
+you replace with your mechanic.
 **Viewport/fullscreen/PWA: `docs/full-screen-pwa.md`** (one-ruler rule, pitfall table,
 cache-busting — read before touching canvas sizing, overlays, or the service worker).
 **Models/conversion: `docs/asset-pipeline.md`** (text-to-3D, FBX→GLB, black-model triage,
@@ -34,8 +34,8 @@ are exposed for introspection. Judge motion by driving it, not from a single fra
   here, never inline. Add your game's math here first, with tests.
 - `scripts/state.js` — single shared mutable state (phase/paused/camYaw/input edges);
   `scripts/events.js` — tiny pub/sub. Events in use: `runstart, hop, dash, bump, win, lose`.
-- `scripts/player.js` — the steel top: per-frame impulses (NEVER rapier `addForce`), joystick +
-  WASD + arrow fallback, pulse timing, overdrive, wobble recovery, shadow, camera-rig update.
+- `scripts/player.js` — the ball-guy: per-frame impulses (NEVER rapier `addForce`), joystick +
+  WASD + arrow fallback, hop, dash burst, squash spring, blob shadow, camera-rig update.
 - `scripts/director.js` — run lifecycle: phases `boot|menu|ready|playing|won|lost`, restart
   with the loadScene-in-flight guard, `won()`/`lost()` for your win conditions, platform
   spawning via `scripts/spawn.js` (THE runtime-spawn pattern — see gotchas).
@@ -103,6 +103,21 @@ are exposed for introspection. Judge motion by driving it, not from a single fra
   `scripts/` — keep the layers.
 - `ponytail:` comments mark deliberate ceilings (shortcut + upgrade path).
 - Test gate: `npm test` green before pushing `main` (Vercel deploys `main`).
+
+## Game development requirements (non-negotiable)
+
+- **Plan before code.** Before implementing any game idea (new game, new mode, or a major
+  mechanic), write a design artifact first — a PRD/GDD in `docs/<game-name>-prd.md` covering
+  at least: pitch, core loop, mechanics, controls, win/lose conditions, tutorialization plan,
+  and scope cuts. Get the user's sign-off on the plan, then implement.
+- **Intro cutscene.** Every game must open with an intro cutscene/sequence (after splash,
+  before `menu`/`ready`) that explains the premise and what the player is trying to do.
+  Skippable on tap/key; wire it as a director phase so restart logic stays clean.
+- **Teach every mechanic.** Whenever a game mechanic exists (hop, dash, or whatever your game
+  adds), it must be explained to the player in-game — via the intro cutscene, a first-run
+  tutorial prompt, or a contextual hint the first time it's relevant. No mechanic ships
+  undocumented to the player. Track "seen" hints in `state` (persist to localStorage if it
+  should survive reloads).
 
 ## Growing a game from the skeleton
 
