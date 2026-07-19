@@ -19,6 +19,7 @@ export const FILES = [
   'scripts/pause.js',
   'scripts/player.js',
   'scripts/hints.js',
+  'data/level.json',
   'CLAUDE.md',
   'README.game.md',
 ];
@@ -38,6 +39,14 @@ export function applyInputs(root, { id, title, author, bg, accent }) {
          .replaceAll(DEF_ACCENT, accent).replaceAll('0x' + DEF_ACCENT.slice(1), '0x' + accent.slice(1));
     writeFileSync(p, s);
   }
+
+  // Bake identity into the level so the intro can present under the author's name (or a
+  // generated studio if none was given). title also feeds the studio-name fallback seed.
+  const lvlPath = join(root, 'data/level.json');
+  const lvl = JSON.parse(readFileSync(lvlPath, 'utf8'));
+  lvl.title = title;
+  lvl.studio = author;
+  writeFileSync(lvlPath, JSON.stringify(lvl, null, 2) + '\n');
 }
 
 const isHex = c => /^#[0-9a-fA-F]{6}$/.test(c);

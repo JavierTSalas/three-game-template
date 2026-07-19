@@ -14,7 +14,7 @@ import { playIntro } from './scripts/cutscene.js';
 import { buildHints } from './scripts/hints.js';
 import { events } from './scripts/events.js';
 import { state } from './scripts/state.js';
-import { outOfWorld } from './logic.js';
+import { outOfWorld, presenterLine } from './logic.js';
 
 const splash = playSplash(); // first paint before ANY engine work — instant boot feel
 navigator.serviceWorker?.register('sw.js').catch(() => {}); // PWA install (no-op worker)
@@ -174,8 +174,11 @@ async function boot() {
     // Skippable; restarts don't replay it (they re-enter via director.restart, not here).
     if (level.intro?.length && !intro.played) {
       intro.played = true;
+      // presenter: baked author (level.studio, set at birth) → "A GAME BY …";
+      // otherwise a studio name generated from the title. Unique, stable per game.
+      const presenter = presenterLine(level.studio, level.title || document.title);
       // next-tick so the Play tap doesn't reach the cutscene's skip listener
-      setTimeout(() => { intro.current = playIntro({ game, level, player: playerRef, lines: level.intro, onDone: begin }); }, 0);
+      setTimeout(() => { intro.current = playIntro({ game, level, player: playerRef, lines: level.intro, presenter, onDone: begin }); }, 0);
     } else begin();
   });
   await splash.done;

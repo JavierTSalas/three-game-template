@@ -68,3 +68,29 @@ export function introSegment(t, lineCount, segSec = TUNE.INTRO_SEG_SEC) {
   const u = raw * raw * (3 - 2 * raw); // smoothstep ease
   return { seg, u, done: t >= segSec * lineCount };
 }
+
+// Studio identity: deterministic, fun-sounding studio name from any seed string (game title,
+// author). Same seed → same name, so a given game always presents under one banner. Used by
+// the intro's "presents" card when no real author name was captured at birth.
+const STUDIO_ADJ = ['Pixel', 'Moonlit', 'Velvet', 'Crimson', 'Neon', 'Wandering', 'Salty',
+  'Turbo', 'Cosmic', 'Gilded', 'Rusty', 'Electric', 'Midnight', 'Golden', 'Frosted',
+  'Thunder', 'Wild', 'Silent', 'Lucky', 'Hyper'];
+const STUDIO_NOUN = ['Otter', 'Badger', 'Comet', 'Anvil', 'Fox', 'Yak', 'Marlin', 'Raccoon',
+  'Falcon', 'Walrus', 'Mammoth', 'Gecko', 'Heron', 'Bison', 'Lynx', 'Manta', 'Puffin',
+  'Ferret', 'Narwhal', 'Koala'];
+const STUDIO_SUFFIX = ['Studios', 'Games', 'Interactive', 'Collective', 'Works', 'Labs'];
+
+const hashStr = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+
+export function studioName(seed = 'game') {
+  const h = hashStr(String(seed) || 'game');
+  return `${STUDIO_ADJ[h % STUDIO_ADJ.length]} ${STUDIO_NOUN[(h >>> 8) % STUDIO_NOUN.length]} ${STUDIO_SUFFIX[(h >>> 16) % STUDIO_SUFFIX.length]}`;
+}
+
+// The intro "presents" line. A real captured author becomes "A GAME BY …"; otherwise a
+// generated studio "… PRESENTS". `author` of '', 'you', or 'your name' counts as absent.
+export function presenterLine(author, seed) {
+  const a = (author || '').trim();
+  if (a && !/^(you|your name|author)$/i.test(a)) return `A GAME BY ${a.toUpperCase()}`;
+  return `${studioName(seed).toUpperCase()} PRESENTS`;
+}

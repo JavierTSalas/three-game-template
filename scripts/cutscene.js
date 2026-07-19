@@ -8,9 +8,10 @@ import { state } from './state.js';
 // lands exactly where the follow rig wants the camera, so play starts without a cut.
 // Lines come from data/level.json "intro" — REPLACE them with your game's premise
 // (requirement: the player must be told what they're doing and why).
-export function playIntro({ game, level, player, lines, onDone }) {
+export function playIntro({ game, level, player, lines, presenter, onDone }) {
   const cam = game.renderer.getCamera();
   const card = document.getElementById('introCard');
+  const presents = document.getElementById('introPresents');
   const B = (level.bounds?.maxX ?? 12) + 4;
   const sp = player.getWorldPos();
   const spawn = new THREE.Vector3(sp.x, sp.y, sp.z); // getWorldPos returns a REUSED vector
@@ -28,11 +29,15 @@ export function playIntro({ game, level, player, lines, onDone }) {
 
   state.phase = 'intro';
   card.style.display = 'block';
+  // "presents" studio/author card — the game's unique signature (see logic.presenterLine).
+  // Fades in over the opening sweep, out before the last line so it never covers story text.
+  if (presenter) { presents.textContent = presenter; requestAnimationFrame(() => { presents.style.opacity = '1'; }); }
   let t = 0, seg = -1, alive = true;
 
   function finish() {
     if (!alive) return;
     alive = false;
+    presents.style.opacity = '0';
     card.style.display = 'none';
     window.removeEventListener('pointerdown', finish);
     window.removeEventListener('keydown', finish);
@@ -52,6 +57,7 @@ export function playIntro({ game, level, player, lines, onDone }) {
       if (s.seg !== seg) {
         seg = s.seg;
         card.querySelector('p').textContent = lines[seg];
+        if (seg >= 1) presents.style.opacity = '0'; // clear the banner once the story starts
       }
       const a = P[Math.min(seg, P.length - 1)], b = P[Math.min(seg + 1, P.length - 1)];
       cam.position.copy(from.copy(a.pos).lerp(to.copy(b.pos), s.u));

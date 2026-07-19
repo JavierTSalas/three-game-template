@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { TUNE, driveScale, moveVector, headingOf, angleLerp, camDist, camHeight, outOfWorld, introSegment } from './logic.js';
+import { TUNE, driveScale, moveVector, headingOf, angleLerp, camDist, camHeight, outOfWorld, introSegment, studioName, presenterLine } from './logic.js';
 
 test('moveVector: stick-forward at camYaw 0 drives toward -z, unit-clamped', () => {
   const v = moveVector(0, 0, 1);
@@ -56,4 +56,18 @@ test('introSegment: segments advance per line, ease stays in [0,1], ends after l
   const mid = introSegment(s * 0.5, n);
   assert.ok(mid.u > 0 && mid.u < 1 && !mid.done);
   assert.equal(introSegment(s * n + 0.01, n).done, true);
+});
+
+test('studioName: deterministic, three well-formed words', () => {
+  assert.equal(studioName('spinfinity'), studioName('spinfinity'));
+  assert.notEqual(studioName('spinfinity'), studioName('rollabout'));
+  assert.match(studioName('x'), /^[A-Z][a-z]+ [A-Z][a-z]+ [A-Z][a-z]+$/);
+  assert.equal(studioName(''), studioName('game')); // empty seed falls back, still stable
+});
+
+test('presenterLine: real author → by-line, missing author → generated studio', () => {
+  assert.equal(presenterLine('Javier Salas', 'anything'), 'A GAME BY JAVIER SALAS');
+  assert.match(presenterLine('you', 'spinfinity'), / PRESENTS$/);
+  assert.match(presenterLine('', 'spinfinity'), / PRESENTS$/);
+  assert.equal(presenterLine('', 'spinfinity'), presenterLine('your name', 'spinfinity'));
 });

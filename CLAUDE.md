@@ -116,7 +116,10 @@ are exposed for introspection. Judge motion by driving it, not from a single fra
   --clone`, work there, and create a NEW Vercel project imported from THAT repo. Never run
   `vercel link`/`vercel deploy`/`vercel git connect` from the template checkout — that
   attaches a game-named Vercel project to the template repo, and every future template push
-  will overwrite the game's production URL (this happened once; don't repeat it).
+  will overwrite the game's production URL (this happened once; don't repeat it). A
+  PreToolUse hook (`.claude/settings.json` → `tools/guard-hook.mjs`) also BLOCKS
+  `vercel deploy/link/git connect` from this checkout as a backstop; read-only vercel
+  commands pass.
 - **Plan before code.** Before implementing any game idea (new game, new mode, or a major
   mechanic), write a design artifact first — copy `docs/prd-template.md` to
   `docs/<game-name>-prd.md` and fill every section (pitch, core loop, mechanics with their
@@ -125,7 +128,10 @@ are exposed for introspection. Judge motion by driving it, not from a single fra
 - **Intro cutscene.** Every game must open with an intro cutscene that explains the premise
   and what the player is trying to do. The scaffold ships: `scripts/cutscene.js` plays a
   skippable flyover after PLAY using the `"intro"` lines in `data/level.json` — replace the
-  placeholder lines with your game's story; extend the waypoints/cards if it needs more.
+  placeholder lines with your game's story; extend the waypoints/cards if it needs more. It
+  opens with a "presents" card: the birth author (`level.studio`, "A GAME BY …") or, if none,
+  a studio name generated from the title (`logic.presenterLine`/`studioName`) — a unique,
+  stable signature per game.
 - **Teach every mechanic.** Whenever a game mechanic exists (hop, dash, or whatever your game
   adds), it must be explained to the player in-game. The scaffold ships: `scripts/hints.js`
   shows one instruction at a time and advances only when the player DOES it (localStorage
