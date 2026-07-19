@@ -1,6 +1,12 @@
 {
   "bounds": { "minX": -12, "maxX": 12, "minZ": -12, "maxZ": 12 },
   "spawn": { "x": 0, "y": 0.6, "z": 0 },
+  "intro": [
+    "Welcome to the sandbox.",
+    "This little world is yours to roll around in.",
+    "Hop the platforms. Dash across the field.",
+    "Replace these lines with YOUR game's story."
+  ],
   "platforms": [
     { "x": 2.4, "y": 0.12, "z": -1.2 },
     { "x": 3.9, "y": 0.42, "z": -2.2 },

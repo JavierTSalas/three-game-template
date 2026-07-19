@@ -47,6 +47,10 @@ are exposed for introspection. Judge motion by driving it, not from a single fra
 - `scripts/pause.js` — Esc/⏸ freeze via `game.gameOptions.disablePhysics` (live-checked by the
   engine loop — never `game.pause()`, its dt explodes on resume) + `state.paused` gates.
   Doubles as the settings page (fullscreen, sound).
+- `scripts/cutscene.js` — intro flyover cutscene (waypoints scale with bounds, tap/key skip,
+  phase `intro`); lines live in `data/level.json` `"intro"`. `scripts/hints.js` — first-run
+  tutorial: one hint at a time, cleared by DOING the thing, localStorage-tracked. Both are
+  how the "explain the game / teach every mechanic" requirements are met — fill them in.
 - `scripts/splash.js` — instant 2D canvas splash; module-top start; menu reveal awaits
   `splash.done`, cover drops via `splash.lift()` only when the world is ready.
 - `scripts/terrain.js` — ground/fence/sun/sky/fog theme. `scripts/platform.js` — hop boxes.
@@ -114,17 +118,19 @@ are exposed for introspection. Judge motion by driving it, not from a single fra
   attaches a game-named Vercel project to the template repo, and every future template push
   will overwrite the game's production URL (this happened once; don't repeat it).
 - **Plan before code.** Before implementing any game idea (new game, new mode, or a major
-  mechanic), write a design artifact first — a PRD/GDD in `docs/<game-name>-prd.md` covering
-  at least: pitch, core loop, mechanics, controls, win/lose conditions, tutorialization plan,
-  and scope cuts. Get the user's sign-off on the plan, then implement.
-- **Intro cutscene.** Every game must open with an intro cutscene/sequence (after splash,
-  before `menu`/`ready`) that explains the premise and what the player is trying to do.
-  Skippable on tap/key; wire it as a director phase so restart logic stays clean.
+  mechanic), write a design artifact first — copy `docs/prd-template.md` to
+  `docs/<game-name>-prd.md` and fill every section (pitch, core loop, mechanics with their
+  teach-plan, controls, win/lose, tutorialization, scope cuts). Get the user's sign-off on
+  the plan, then implement.
+- **Intro cutscene.** Every game must open with an intro cutscene that explains the premise
+  and what the player is trying to do. The scaffold ships: `scripts/cutscene.js` plays a
+  skippable flyover after PLAY using the `"intro"` lines in `data/level.json` — replace the
+  placeholder lines with your game's story; extend the waypoints/cards if it needs more.
 - **Teach every mechanic.** Whenever a game mechanic exists (hop, dash, or whatever your game
-  adds), it must be explained to the player in-game — via the intro cutscene, a first-run
-  tutorial prompt, or a contextual hint the first time it's relevant. No mechanic ships
-  undocumented to the player. Track "seen" hints in `state` (persist to localStorage if it
-  should survive reloads).
+  adds), it must be explained to the player in-game. The scaffold ships: `scripts/hints.js`
+  shows one instruction at a time and advances only when the player DOES it (localStorage
+  once-per-install). Add a step (or a contextual hint) for every mechanic you add — the PRD's
+  mechanics table must say which.
 
 ## Growing a game from the skeleton
 

@@ -135,6 +135,19 @@
       <button id="soundBtn" class="ghost">🔊 SOUND ON</button>
     </div>
   </div>
+  <div id="introCard" class="overlay" style="display:none;">
+    <p style="position:fixed; left:50%; bottom:max(46px, env(safe-area-inset-bottom)); transform:translateX(-50%);
+              max-width:min(640px, 88vw); text-align:center; font-size:clamp(17px, 3.4vw, 26px); font-weight:800;
+              color:var(--ink); text-shadow:0 2px 6px #000c; background:color-mix(in srgb, var(--bg) 72%, transparent);
+              border-radius:14px; padding:12px 22px;"></p>
+    <div style="position:fixed; top:max(10px, env(safe-area-inset-top)); right:max(12px, env(safe-area-inset-right));
+                font-size:11px; font-weight:800; letter-spacing:2px; color:color-mix(in srgb, var(--ink) 60%, transparent);">
+      TAP TO SKIP</div>
+  </div>
+  <div id="hintCard" style="display:none; position:fixed; top:calc(max(8px, env(safe-area-inset-top)) + 40px); left:50%;
+       transform:translateX(-50%); background:color-mix(in srgb, var(--bg) 80%, transparent); color:var(--accent2);
+       font-family:var(--body); font-size:15px; font-weight:800; padding:8px 18px; border-radius:999px;
+       pointer-events:none; text-shadow:0 1px 3px #000; white-space:nowrap;"></div>
   <div id="rotateHint" class="overlay">🔄<br>Rotate your phone sideways —<br>this one plays in landscape.</div>
 </body>
 </html>

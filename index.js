@@ -10,6 +10,8 @@ import { buildParticles, toonify } from './scripts/juice.js';
 import { buildPause } from './scripts/pause.js';
 import { bindFsButton } from './scripts/fullscreen.js';
 import { playSplash } from './scripts/splash.js';
+import { playIntro } from './scripts/cutscene.js';
+import { buildHints } from './scripts/hints.js';
 import { events } from './scripts/events.js';
 import { state } from './scripts/state.js';
 import { outOfWorld } from './logic.js';
@@ -71,6 +73,8 @@ async function boot() {
 
   const director = new Director(game, level);
   const audio = buildAudio();
+  const hints = buildHints();               // first-run tutorial (no-op once onboarded)
+  const intro = { current: null };          // cutscene handle for the render hook
 
   // holders so once-registered listeners always hit the current run's objects
   // (restart must never stack duplicate listeners — same rule for the camera rig)
@@ -112,8 +116,10 @@ async function boot() {
       cam.position.set(Math.sin(menuYaw) * B, B * 0.5, Math.cos(menuYaw) * B);
       cam.lookAt(0, 0, 0);
     }
+    intro.current?.update(deltaTimeInSec); // cutscene owns the camera during phase 'intro'
     if (!state.paused) {
       director.tick(deltaTimeInSec);
+      hints.update(deltaTimeInSec);
       // launched off the map / through the floor: put the guy back at spawn
       if ((state.phase === 'playing' || state.phase === 'ready') && playerRef?.isLoaded?.()
           && outOfWorld(playerRef.getWorldPos(), level.bounds)) {
@@ -158,8 +164,19 @@ async function boot() {
   document.getElementById('playBtn').addEventListener('click', () => {
     audio.ensure(); // AudioContext needs a user gesture
     startScreen.style.display = 'none';
-    document.getElementById('controls').style.display = 'block';
-    state.phase = 'ready'; // first input flips 'playing' (director.tick)
+    const begin = () => {
+      intro.current = null;
+      document.getElementById('controls').style.display = 'block';
+      hints.start();
+      state.phase = 'ready'; // first input flips 'playing' (director.tick)
+    };
+    // REQUIRED: every game opens with a cutscene that explains the premise (CLAUDE.md).
+    // Skippable; restarts don't replay it (they re-enter via director.restart, not here).
+    if (level.intro?.length && !intro.played) {
+      intro.played = true;
+      // next-tick so the Play tap doesn't reach the cutscene's skip listener
+      setTimeout(() => { intro.current = playIntro({ game, level, player: playerRef, lines: level.intro, onDone: begin }); }, 0);
+    } else begin();
   });
   await splash.done;
   splash.lift(); // world is spawned + menu is up — NOW drop the cover

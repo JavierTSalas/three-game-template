@@ -59,7 +59,7 @@ export default class Player extends GameObject {
   velocity() { return this.getRapierRigidBody().linvel(); }
 
   beforeRender({ deltaTimeInSec: dt }) {
-    if (!this.isLoaded() || state.phase === 'boot' || state.phase === 'menu') return; // menu: the ball poses
+    if (!this.isLoaded() || state.phase === 'boot' || state.phase === 'menu' || state.phase === 'intro') return; // menu/intro: cutscene owns the camera
     const body = this.getRapierRigidBody();
     const v = body.linvel();
 

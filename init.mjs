@@ -18,6 +18,7 @@ export const FILES = [
   'scripts/splash.js',
   'scripts/pause.js',
   'scripts/player.js',
+  'scripts/hints.js',
   'CLAUDE.md',
   'README.game.md',
 ];

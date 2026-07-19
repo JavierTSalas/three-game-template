@@ -2,13 +2,19 @@
 
 ## Quick start
 
+From a checkout of this template, one command does everything — new private GitHub repo,
+identity stamping, and a fresh Vercel project, all in a SIBLING directory (never build a
+game inside the template checkout):
+
 ```bash
-gh repo create my-game --template JavierTSalas/three-game-template --private --clone
-cd my-game && node init.mjs      # a few prompts (name, title, author, colors) — then it deletes itself
-npm install && npm run dev       # playable at http://localhost:8180, LAN-exposed for phones
+npm run birth -- my-game "MY GAME"   # repo + init.mjs + vercel project, then: cd ../my-game
+npm install && npm run dev           # playable at http://localhost:8180, LAN-exposed for phones
 ```
 
-(No `gh`? Click **Use this template** on GitHub instead, then clone and run `node init.mjs`.)
+Or by hand: `gh repo create my-game --template JavierTSalas/three-game-template --private
+--clone`, then `cd my-game && node init.mjs` (no `gh`? Click **Use this template** on GitHub).
+Before writing game code, copy `docs/prd-template.md` to `docs/my-game-prd.md` and fill it
+in — see CLAUDE.md "Game development requirements".
 
 That's a complete, installable, deployable mobile-landscape browser game: boot splash → hero
 main menu over a live orbiting world → a rolling ball-guy you drive, hop, and dash around a

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { TUNE, driveScale, moveVector, headingOf, angleLerp, camDist, camHeight, outOfWorld } from './logic.js';
+import { TUNE, driveScale, moveVector, headingOf, angleLerp, camDist, camHeight, outOfWorld, introSegment } from './logic.js';
 
 test('moveVector: stick-forward at camYaw 0 drives toward -z, unit-clamped', () => {
   const v = moveVector(0, 0, 1);
@@ -46,4 +46,14 @@ test('camera curves: distance clamps to its minimum, height stays positive', () 
   assert.equal(camDist(0), TUNE.CAM_DIST_MIN);
   assert.ok(camDist(TUNE.PLAYER_R) >= TUNE.CAM_DIST_MIN);
   assert.ok(camHeight(TUNE.PLAYER_R) > 0);
+});
+
+test('introSegment: segments advance per line, ease stays in [0,1], ends after last line', () => {
+  const n = 4, s = TUNE.INTRO_SEG_SEC;
+  assert.deepEqual(introSegment(0, n).seg, 0);
+  assert.equal(introSegment(s * 1.5, n).seg, 1);
+  assert.equal(introSegment(s * 99, n).seg, n - 1); // clamps, never overruns the arrays
+  const mid = introSegment(s * 0.5, n);
+  assert.ok(mid.u > 0 && mid.u < 1 && !mid.done);
+  assert.equal(introSegment(s * n + 0.01, n).done, true);
 });

@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "webpack serve --config webpack.config.cjs",
     "build": "webpack --config webpack.prod.cjs",
-    "test": "node --test"
+    "test": "node --test",
+    "birth": "node tools/birth.mjs"
   },
   "dependencies": {
     "three-game-engine": "^0.10.0"

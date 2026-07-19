@@ -4,6 +4,7 @@
 export const TUNE = {
   BOUND: 12,            // half-extent of the play area (m) — mirror data/level.json bounds
   PLAYER_R: 0.24,       // ball radius (m) — mirror game_objects/player.json
+  INTRO_SEG_SEC: 2.7,   // intro cutscene: seconds per narrator line / camera sweep
 
   ACCEL: 22,            // drive force as m/s² at rest (scaled down toward MAX_SPEED)
   MAX_SPEED: 4.2,       // terminal horizontal speed (m/s)
@@ -57,4 +58,13 @@ export function angleLerp(a, b, t) {
   while (r > Math.PI) r -= 2 * Math.PI;
   while (r < -Math.PI) r += 2 * Math.PI;
   return r;
+}
+
+// Intro cutscene timing: which line/segment t falls in, eased progress within it, done flag.
+// One waypoint-to-waypoint sweep per line; the last segment holds its final waypoint.
+export function introSegment(t, lineCount, segSec = TUNE.INTRO_SEG_SEC) {
+  const seg = Math.min(Math.floor(t / segSec), lineCount - 1);
+  const raw = Math.min((t - seg * segSec) / segSec, 1);
+  const u = raw * raw * (3 - 2 * raw); // smoothstep ease
+  return { seg, u, done: t >= segSec * lineCount };
 }
