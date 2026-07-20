@@ -1,7 +1,8 @@
 # <GAME TITLE> — PRD / GDD
 
 > Copy this file to `docs/<game-id>-prd.md`, fill every section, and get the user's sign-off
-> BEFORE writing game code (see CLAUDE.md "Game development requirements"). Keep it updated —
+> BEFORE writing game code (see AGENTS.md / CLAUDE.md "Game development requirements").
+> Keep it updated —
 > when a mechanic changes, the PRD changes in the same commit. Delete guidance blockquotes as
 > you fill them in.
 
@@ -16,17 +17,33 @@
 
 ## Mechanics
 
-> One row per mechanic. "Taught by" is REQUIRED — every mechanic must be explained in-game
-> (intro cutscene, hint step in `scripts/hints.js`, or contextual prompt). No blank cells.
+> One row per mechanic. Both input columns and "Taught by" are REQUIRED — every mechanic must
+> work without a physical keyboard on mobile and have a desktop path, and must be explained
+> in-game (intro cutscene, hint step in `scripts/hints.js`, or contextual prompt). No blank
+> cells. A direct gesture may be the touch input; otherwise name the visible on-screen control.
 
-| Mechanic | What it does | Input | Taught by |
-|---|---|---|---|
-| e.g. Hop | small jump, gap crossing | HOP btn / Space | hint step 2 |
+| Mechanic | What it does | Touch / on-screen input | Desktop input | Taught by |
+|---|---|---|---|---|
+| e.g. Hop | small jump, gap crossing | HOP button | Space | hint step 2 |
 
 ## Controls
 
-> Touch layout (landscape) + keyboard fallback. The template gives you: floating stick,
-> two action buttons, WASD/arrows, Space, Shift/E.
+> Define the complete controls for EVERY mode and minigame. No required action may be
+> keyboard-only: a landscape phone with no physical keyboard must be able to finish the game.
+> Desktop must have a complete keyboard and/or mouse/pointer path appropriate to the action;
+> where both fit naturally, support both. Direct gestures are welcome; otherwise provide
+> visible, reachable on-screen controls. Do not rely on hover or right-click. The template
+> gives you: floating stick, two action buttons, WASD/arrows, Space, Shift/E, and Pointer Events
+> that can serve mouse and touch from the same handler.
+
+| Mode / screen | Touch / on-screen controls | Keyboard | Mouse / pointer |
+|---|---|---|---|
+| e.g. Main game | stick + HOP/DASH buttons | WASD/arrows + Space + Shift/E | camera drag |
+
+> Before implementation, confirm that every required action appears in both the touch and
+> desktop paths above. Use "N/A — not natural" rather than leaving a desktop modality blank.
+> During verification, play each mode once at a mobile-landscape viewport using touch/pointer
+> events and once with its desktop inputs.
 
 ## Win / lose
 

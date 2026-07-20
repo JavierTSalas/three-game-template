@@ -12,6 +12,10 @@ A mobile-landscape browser game by __AUTHOR__.
 - **Desktop:** **WASD or arrow keys** roll · **Space** = hop · **E** (or Shift) = dash ·
   drag = orbit · **Esc** = pause (settings live there: fullscreen, sound).
 
+Keep input parity as the game grows: every required action in the main game, menus, and
+minigames needs a mobile touch path and an appropriate desktop keyboard and/or mouse path.
+Where both desktop inputs fit naturally, support both; a keyboard-only mode is not complete.
+
 ## Run / develop
 
     npm install
@@ -20,7 +24,8 @@ A mobile-landscape browser game by __AUTHOR__.
     npm run build      # production bundle → dist/
 
 All tuning lives in `TUNE` in `logic.js` (tested in `logic.test.js`); content lives in
-`data/level.json`; engine gotchas and the growing-a-game guide live in `CLAUDE.md`;
+`data/level.json`; agent rules, engine gotchas, and the growing-a-game guide live in
+`AGENTS.md` / `CLAUDE.md`;
 viewport/PWA and 3D-asset playbooks live in `docs/`.
 
 ## Deploy (once)
@@ -36,7 +41,8 @@ every push to `main` deploys. Installed-PWA players pick up new builds via the
 - [ ] Retint: CSS vars in `index.html` (`--bg`, `--accent`, …), `manifest.json` colors,
       terrain theme in `scripts/terrain.js`
 - [ ] Import the repo in Vercel; paste the play URL at the top of this README
-- [ ] Replace the platformer sandbox with your mechanic (`CLAUDE.md` → "Growing a game")
+- [ ] Replace the platformer sandbox with your mechanic (`AGENTS.md` / `CLAUDE.md` →
+      "Growing a game")
 - [ ] Portrait game instead? Flip `manifest.json → orientation` and the `#rotateHint`
       media query in `index.html`
 

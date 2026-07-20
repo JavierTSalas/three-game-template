@@ -63,7 +63,7 @@ console.log(`
 
     cd ${dest}
     npm install && npm run dev      # play it at :8180
-    cp docs/prd-template.md docs/${id}-prd.md   # write the PRD FIRST (CLAUDE.md requirement)
+    cp docs/prd-template.md docs/${id}-prd.md   # write the PRD FIRST (AGENTS/CLAUDE requirement)
 
   repo:   https://github.com/${owner}/${id}
   vercel: ${deployed ? `project "${id}" — every push to main deploys` : 'import the repo at vercel.com once'}

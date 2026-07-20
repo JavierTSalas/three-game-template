@@ -14,7 +14,7 @@ npm install && npm run dev           # playable at http://localhost:8180, LAN-ex
 Or by hand: `gh repo create my-game --template JavierTSalas/three-game-template --private
 --clone`, then `cd my-game && node init.mjs` (no `gh`? Click **Use this template** on GitHub).
 Before writing game code, copy `docs/prd-template.md` to `docs/my-game-prd.md` and fill it
-in — see CLAUDE.md "Game development requirements".
+in — see `AGENTS.md` / `CLAUDE.md` "Game development requirements".
 
 That's a complete, installable, deployable mobile-landscape browser game: boot splash → hero
 main menu over a live orbiting world → a rolling ball-guy you drive, hop, and dash around a
@@ -45,7 +45,7 @@ repo — `npm run dev` and drive it.
 | PWA | `manifest.json`, `sw.js`, ↻ REFRESH APP | installable, landscape-locked, with a shipped cache-flush button for stale installs |
 | Rigor | `logic.js`, `logic.test.js`, `node --test` | pure math + tuning in one tested file; `window.__state` hooks for Playwright driving |
 | Deploy | `vercel.json` | import the repo in Vercel once; every push to `main` deploys |
-| Knowledge | `CLAUDE.md`, `docs/` | engine gotchas, viewport/PWA playbook, 3D asset conversion playbook |
+| Knowledge | `AGENTS.md`, `CLAUDE.md`, `docs/` | agent rules, engine gotchas, viewport/PWA playbook, 3D asset conversion playbook |
 
 ## Controls (shipped defaults)
 
@@ -54,6 +54,11 @@ repo — `npm run dev` and drive it.
   of the screen = orbit camera.
 - **Desktop:** **WASD or arrow keys** roll · **Space** = hop · **E** (or Shift) = dash ·
   drag = orbit · **Esc** = pause.
+
+Games grown from this template keep input parity: every required action in the main game,
+menus, and minigames needs a mobile touch path and an appropriate desktop keyboard and/or
+mouse path. Where both desktop inputs fit naturally, support both; a keyboard-only mode is
+not considered complete.
 
 ## Developing the template itself
 
@@ -72,7 +77,7 @@ drift stays visible.
 `node init.mjs` renames `README.game.md` over this file, stamps your name/title/colors into
 the shell, and deletes itself. Then: replace `icons/` with your art, import the repo at
 vercel.com → every push deploys, and start replacing the sandbox (see "Growing a game from
-the skeleton" in `CLAUDE.md`).
+the skeleton" in `AGENTS.md` / `CLAUDE.md`).
 
 ## License & credits
 

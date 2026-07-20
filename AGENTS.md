@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 ## What this is
 
@@ -119,7 +119,7 @@ desktop keyboard/mouse path. Judge motion by driving it, not from a single frame
   `vercel link`/`vercel deploy`/`vercel git connect` from the template checkout — that
   attaches a game-named Vercel project to the template repo, and every future template push
   will overwrite the game's production URL (this happened once; don't repeat it). A
-  PreToolUse hook (`.claude/settings.json` → `tools/guard-hook.mjs`) also BLOCKS
+  PreToolUse hook (`.Codex/settings.json` → `tools/guard-hook.mjs`) also BLOCKS
   `vercel deploy/link/git connect` from this checkout as a backstop; read-only vercel
   commands pass.
 - **Plan before code.** Before implementing any game idea (new game, new mode, or a major

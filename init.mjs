@@ -21,6 +21,7 @@ export const FILES = [
   'scripts/hints.js',
   'data/level.json',
   'CLAUDE.md',
+  'AGENTS.md',
   'README.game.md',
 ];
 
@@ -98,7 +99,7 @@ async function main() {
     npm test                       # keep this green
     # replace icons/icon-192.png + icon-512.png with your art
     # import the repo at vercel.com once — every push to main deploys
-    # then: CLAUDE.md → "Growing a game from the skeleton"
+    # then: AGENTS.md / CLAUDE.md → "Growing a game from the skeleton"
 `);
 }
 
