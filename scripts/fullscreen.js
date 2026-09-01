@@ -11,7 +11,6 @@ export async function toggleFullscreen() {
     } else {
       const el = document.documentElement;
       await (el.requestFullscreen?.({ navigationUI: 'hide' }) ?? el.webkitRequestFullscreen?.());
-      try { await screen.orientation.lock('landscape'); } catch { /* desktop / unsupported */ }
     }
   } catch { /* user gesture expired or platform said no — button stays honest via fsActive */ }
 }

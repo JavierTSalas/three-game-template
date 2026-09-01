@@ -4,7 +4,7 @@
   "description": "A tiny browser platformer.",
   "start_url": ".",
   "display": "standalone",
-  "orientation": "landscape",
+  "orientation": "any",
   "background_color": "#101623",
   "theme_color": "#101623",
   "icons": [

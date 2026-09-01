@@ -1,6 +1,6 @@
 # __GAME_TITLE__
 
-A mobile-landscape browser game by __AUTHOR__.
+A mobile browser game by __AUTHOR__.
 
 **Play it:** _add your Vercel URL here after the first deploy_
 
@@ -43,8 +43,8 @@ every push to `main` deploys. Installed-PWA players pick up new builds via the
 - [ ] Import the repo in Vercel; paste the play URL at the top of this README
 - [ ] Replace the platformer sandbox with your mechanic (`AGENTS.md` / `CLAUDE.md` →
       "Growing a game")
-- [ ] Portrait game instead? Flip `manifest.json → orientation` and the `#rotateHint`
-      media query in `index.html`
+- [ ] Verify the game remains playable in both portrait and landscape; the template does not
+      lock the player's device orientation
 
 ## Credits
 

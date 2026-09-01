@@ -29,7 +29,8 @@
 ## Controls
 
 > Define the complete controls for EVERY mode and minigame. No required action may be
-> keyboard-only: a landscape phone with no physical keyboard must be able to finish the game.
+> keyboard-only: a phone with no physical keyboard must be able to finish the game in either
+> orientation.
 > Desktop must have a complete keyboard and/or mouse/pointer path appropriate to the action;
 > where both fit naturally, support both. Direct gestures are welcome; otherwise provide
 > visible, reachable on-screen controls. Do not rely on hover or right-click. The template
@@ -42,8 +43,8 @@
 
 > Before implementation, confirm that every required action appears in both the touch and
 > desktop paths above. Use "N/A — not natural" rather than leaving a desktop modality blank.
-> During verification, play each mode once at a mobile-landscape viewport using touch/pointer
-> events and once with its desktop inputs.
+> During verification, play each mode in both mobile portrait and landscape viewports using
+> touch/pointer events, then once with its desktop inputs.
 
 ## Win / lose
 

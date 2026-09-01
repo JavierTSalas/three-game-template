@@ -16,7 +16,7 @@ Or by hand: `gh repo create my-game --template JavierTSalas/three-game-template 
 Before writing game code, copy `docs/prd-template.md` to `docs/my-game-prd.md` and fill it
 in — see `AGENTS.md` / `CLAUDE.md` "Game development requirements".
 
-That's a complete, installable, deployable mobile-landscape browser game: boot splash → hero
+That's a complete, installable, deployable mobile browser game: boot splash → hero
 main menu over a live orbiting world → a rolling ball-guy you drive, hop, and dash around a
 platformer sandbox — with pause/settings, PWA install, cache-refresh, tests, and Vercel
 deploy already wired. Replace the sandbox with your mechanic.
@@ -41,8 +41,8 @@ repo — `npm run dev` and drive it.
 | Engine | `game.json`, `scenes/`, `game_objects/` | three-game-engine v0.10 (three.js + Rapier) with a components-JSON scene, valid fog, prefabs |
 | Feel | `scripts/player.js`, `camera.js`, `juice.js`, `audio.js` | impulse-driven rolling, squash & stretch, follow/orbit/shake camera, toon pass, particles, procedural sound (no audio files) |
 | Input | `scripts/joystick.js` + keyboard fallback | floating touch stick, WASD **and** arrow keys, hop/dash buttons |
-| Shell | `index.html`, `scripts/pause.js`, `fullscreen.js` | one-ruler fullscreen CSS, hero menu, pause-as-settings (sound toggle), rotate hint, credits |
-| PWA | `manifest.json`, `sw.js`, ↻ REFRESH APP | installable, landscape-locked, with a shipped cache-flush button for stale installs |
+| Shell | `index.html`, `scripts/pause.js`, `fullscreen.js` | one-ruler fullscreen CSS, hero menu, pause-as-settings (sound toggle), credits |
+| PWA | `manifest.json`, `sw.js`, ↻ REFRESH APP | installable, follows device orientation, with a shipped cache-flush button for stale installs |
 | Rigor | `logic.js`, `logic.test.js`, `node --test` | pure math + tuning in one tested file; `window.__state` hooks for Playwright driving |
 | Deploy | `vercel.json` | import the repo in Vercel once; every push to `main` deploys |
 | Knowledge | `AGENTS.md`, `CLAUDE.md`, `docs/` | agent rules, engine gotchas, viewport/PWA playbook, 3D asset conversion playbook |
