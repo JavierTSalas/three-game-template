@@ -2,7 +2,7 @@
 
 ## What this is
 
-**__GAME_TITLE__** — a mobile-landscape browser game built on **three-game-engine** v0.10
+**__GAME_TITLE__** — a mobile browser game built on **three-game-engine** v0.10
 (bundles three 0.168 + rapier3d-compat 0.11 + three-mesh-ui). Webpack build, DOM overlays for
 menus/controls, procedural WebAudio, PWA-installable, deployed on Vercel (push `main` → prod).
 Born from `three-game-template`; the shipped "game" is a platformer sandbox (roll, hop, dash)
@@ -21,8 +21,8 @@ engine-scene reuse — read before importing any 3D asset).
 Verify feel by driving the real game in a browser (Playwright/DevTools): pointer events on
 `#stickZone`, keyboard WASD/arrows; `window.game` / `window.__state` / `window.__director`
 are exposed for introspection. For every gameplay mode and minigame, exercise the complete
-input set once with touch/pointer controls in a mobile-landscape viewport and once with its
-desktop keyboard/mouse path. Judge motion by driving it, not from a single frame.
+input set with touch/pointer controls in both mobile portrait and landscape viewports, then
+once with its desktop keyboard/mouse path. Judge motion by driving it, not from a single frame.
 "Something's clipped / there's a scrollbar" → run the debug snippet in
 `docs/full-screen-pwa.md` before touching code.
 
@@ -128,14 +128,14 @@ desktop keyboard/mouse path. Judge motion by driving it, not from a single frame
   teach-plan, controls, win/lose, tutorialization, scope cuts). Get the user's sign-off on
   the plan, then implement.
 - **Input parity.** Every required gameplay action in the main game, every minigame, and every
-  interactive overlay must be usable on both (1) a landscape mobile touchscreen with no
-  physical keyboard and (2) desktop with keyboard and/or mouse/pointer as appropriate to the
-  action. Where keyboard and pointer both fit naturally, support both. A direct touch gesture
-  counts; otherwise provide visible on-screen controls. Never ship a keyboard-only mode, rely
-  on hover/right-click, or assume a mobile player has a hardware keyboard. Controls may adapt
-  by input capability and do not all need to be visible at once. Record both paths in the PRD
-  and verify both in the real game; if a mechanic truly cannot support one path, stop and get
-  explicit user sign-off before coding.
+  interactive overlay must be usable on both (1) a mobile touchscreen in portrait and
+  landscape with no physical keyboard and (2) desktop with keyboard and/or mouse/pointer as
+  appropriate to the action. Where keyboard and pointer both fit naturally, support both. A
+  direct touch gesture counts; otherwise provide visible on-screen controls. Never ship a
+  keyboard-only mode, rely on hover/right-click, or assume a mobile player has a hardware
+  keyboard. Controls may adapt by input capability and do not all need to be visible at once.
+  Record both paths in the PRD and verify both in the real game; if a mechanic truly cannot
+  support one path, stop and get explicit user sign-off before coding.
 - **Intro cutscene.** Every game must open with an intro cutscene that explains the premise
   and what the player is trying to do. The scaffold ships: `scripts/cutscene.js` plays a
   skippable flyover after PLAY using the `"intro"` lines in `data/level.json` — replace the

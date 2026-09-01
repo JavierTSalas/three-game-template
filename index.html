@@ -89,10 +89,6 @@
   #creditsPanel .credits { max-width: min(560px, 90vw); font-size: 13px; line-height: 1.5;
                            display: flex; flex-direction: column; gap: 7px; }
   #creditsPanel .credits b { color: var(--accent2); }
-  /* Rotate hint (portrait only) — portrait game? flip this media query + manifest orientation */
-  #rotateHint { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 50;
-                align-items: center; justify-content: center; font-size: 22px; font-weight: 800; text-align: center; padding: 24px; }
-  @media (orientation: portrait) { #rotateHint { display: flex; } }
 </style>
 </head>
 <body>
@@ -151,6 +147,5 @@
        transform:translateX(-50%); background:color-mix(in srgb, var(--bg) 80%, transparent); color:var(--accent2);
        font-family:var(--body); font-size:15px; font-weight:800; padding:8px 18px; border-radius:999px;
        pointer-events:none; text-shadow:0 1px 3px #000; white-space:nowrap;"></div>
-  <div id="rotateHint" class="overlay">🔄<br>Rotate your phone sideways —<br>this one plays in landscape.</div>
 </body>
 </html>
