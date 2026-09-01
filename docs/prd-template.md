@@ -13,7 +13,14 @@
 
 ## Core loop
 
-> The 10–30 second cycle the player repeats: do → reward → escalate. Diagram or numbered list.
+> If the original pitch is brief, autonomously choose the strongest premise-specific loop and
+> commit to it here; do not return the design problem to the user. Moving, hopping, dashing,
+> collecting, or surviving alone is not a complete loop. Describe the 10–30 second cycle the
+> player repeats (do → decide → risk → reward → escalate), then fill every column below.
+
+| Core verb | Repeated meaningful decision | Risk / reward | Escalating pressure | Failure / recovery hook | Mastery / replay hook |
+|---|---|---|---|---|---|
+| _what the player actively does_ | _the choice that changes each cycle_ | _what is wagered and won_ | _how the loop intensifies_ | _what failure teaches and how play restarts_ | _what skilled players chase next_ |
 
 ## World / level identity
 
@@ -72,9 +79,18 @@
 > The `scripts/hints.js` step list: text + the deed that clears each step. Plus any
 > contextual hints for mechanics that appear later.
 
-## Juice & audio
+## Reward cadence, juice & audio
 
-> Events → particles/shake/sound. The template wires: hop, dash, bump, win, lose.
+> Plan earned feedback at all three timescales. Every effect must communicate a real action,
+> risk, state change, or payoff; do not substitute popup spam, passive rewards, or decorative
+> currencies for satisfying mechanics. The template already wires hop, dash, bump, win, and
+> lose events as examples.
+
+| Timescale | Earned trigger | Player-readable feedback | Escalation / variation | Reset or recovery |
+|---|---|---|---|---|
+| Immediate (under 1 second) | _skilled input, contact, timing, pickup_ | _motion, sound, particles, shake, hit-stop, score tick_ | _stronger feedback for better execution_ | _how misses stay readable_ |
+| Short cycle (10–30 seconds) | _chain, multiplier, near-miss, completed beat_ | _rising audio/visual intensity and clear stakes_ | _how tension and reward grow_ | _how the player saves or loses the chain_ |
+| Whole run | _milestone, new phase, boss, extraction, personal best_ | _challenge shift, celebration, persistent progress_ | _new patterns, hazards, goals, or tradeoffs_ | _why failure creates an immediate one-more-run goal_ |
 
 ## Scope cuts (ponytails)
 
