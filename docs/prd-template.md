@@ -15,6 +15,18 @@
 
 > The 10–30 second cycle the player repeats: do → reward → escalate. Diagram or numbered list.
 
+## World / level identity
+
+> REQUIRED even when the original game idea is vague. Make one specific spatial choice that
+> expresses the premise and helps the core loop. The template's checkerboard, four-wall
+> boundary, default bounds, and platform rows are scaffolding: replace their spatial identity,
+> not just their colors or props. A square or rectangular room is valid only when it is an
+> intentional choice; explain the gameplay reason here.
+
+| Topology / silhouette | Boundary fiction | Traversal pattern | Signature landmark | Why it serves the core loop |
+|---|---|---|---|---|
+| _name the shape_ | _what contains or ends the play space_ | _how players move through it_ | _one memorable spatial anchor_ | _mechanical reason_ |
+
 ## Mechanics
 
 > One row per mechanic. Both input columns and "Taught by" are REQUIRED — every mechanic must

@@ -127,6 +127,17 @@ once with its desktop keyboard/mouse path. Judge motion by driving it, not from 
   `docs/<game-name>-prd.md` and fill every section (pitch, core loop, mechanics with their
   teach-plan, controls, win/lose, tutorialization, scope cuts). Get the user's sign-off on
   the plan, then implement.
+- **Author the world; never ship the fallback room.** The starter checkerboard, four-wall
+  boundary, default bounds, and platform rows are scaffolding, not a neutral finished level.
+  Every game must replace that spatial identity with a topology and silhouette derived from
+  its premise and core loop. Before implementation, fill the PRD's "World / level identity"
+  section: choose the boundary fiction, traversal pattern, and at least one signature spatial
+  landmark, then explain how they support play. If the user's idea is vague, make a specific,
+  coherent choice instead of preserving the starter layout. A square or rectangular room is
+  allowed only when it is an intentional authored choice and the PRD explains why it serves
+  the game; recoloring or decorating the fallback room is not enough. Update
+  `scripts/terrain.js`, `data/level.json` bounds/spawn/placements, and camera or intro framing
+  as needed so the playable space, visuals, and boundary logic agree.
 - **Input parity.** Every required gameplay action in the main game, every minigame, and every
   interactive overlay must be usable on both (1) a mobile touchscreen in portrait and
   landscape with no physical keyboard and (2) desktop with keyboard and/or mouse/pointer as
