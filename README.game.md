@@ -43,8 +43,10 @@ every push to `main` deploys. Installed-PWA players pick up new builds via the
 - [ ] Replace the starter room's layout, bounds, boundary, spawn, and placements with the
       approved PRD world identity; recoloring the fallback room is not enough
 - [ ] Import the repo in Vercel; paste the play URL at the top of this README
-- [ ] Replace the platformer sandbox with your mechanic (`AGENTS.md` / `CLAUDE.md` →
-      "Growing a game")
+- [ ] Replace the platformer sandbox with a premise-specific decision loop; movement, hop,
+      dash, collecting, or survival alone do not count as the finished mechanic
+- [ ] Implement the PRD's immediate, short-cycle, and whole-run reward cadence before calling
+      v1 complete
 - [ ] Verify the game remains playable in both portrait and landscape; the template does not
       lock the player's device orientation
 

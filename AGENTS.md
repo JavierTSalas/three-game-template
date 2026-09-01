@@ -127,6 +127,20 @@ once with its desktop keyboard/mouse path. Judge motion by driving it, not from 
   `docs/<game-name>-prd.md` and fill every section (pitch, core loop, mechanics with their
   teach-plan, controls, win/lose, tutorialization, scope cuts). Get the user's sign-off on
   the plan, then implement.
+- **Invent the fun when the pitch is brief.** A short or vague request is permission to make a
+  strong, coherent creative choice, not to preserve the generic sandbox or ask the user to
+  design the game. Autonomously choose the strongest premise-specific core loop, write it into
+  the PRD, and present that complete design for sign-off. Moving, hopping, dashing, collecting,
+  or merely surviving are controls or objectives, not a finished loop by themselves. The loop
+  must create a repeated meaningful decision, readable risk/reward, escalating pressure, a
+  clear failure/recovery hook, and room for mastery that makes another run appealing.
+- **Make rewards earned and layered.** Design feedback at three timescales: immediate response
+  to each skilled action, a 10–30 second chain/multiplier/near-miss or rising-stakes cycle, and
+  a whole-run arc with changing challenges, milestones, and a persistent goal. Tie animation,
+  sound, particles, shake, hit-stop, scoring, and UI emphasis to real player actions and state
+  changes. High feedback should come from anticipation, precision, risk, and payoff — never
+  arbitrary popup spam, meaningless currencies, passive rewards, or idle dark patterns. Fill
+  the PRD's core-loop and reward-cadence tables before implementation.
 - **Author the world; never ship the fallback room.** The starter checkerboard, four-wall
   boundary, default bounds, and platform rows are scaffolding, not a neutral finished level.
   Every game must replace that spatial identity with a topology and silhouette derived from
