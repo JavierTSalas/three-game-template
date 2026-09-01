@@ -40,6 +40,8 @@ every push to `main` deploys. Installed-PWA players pick up new builds via the
 - [ ] Replace `icons/icon-192.png` + `icons/icon-512.png` with your art
 - [ ] Retint: CSS vars in `index.html` (`--bg`, `--accent`, …), `manifest.json` colors,
       terrain theme in `scripts/terrain.js`
+- [ ] Replace the starter room's layout, bounds, boundary, spawn, and placements with the
+      approved PRD world identity; recoloring the fallback room is not enough
 - [ ] Import the repo in Vercel; paste the play URL at the top of this README
 - [ ] Replace the platformer sandbox with your mechanic (`AGENTS.md` / `CLAUDE.md` →
       "Growing a game")
